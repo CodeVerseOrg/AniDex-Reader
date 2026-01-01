@@ -1,0 +1,1 @@
+export { MangaReader } from './MangaReader';
