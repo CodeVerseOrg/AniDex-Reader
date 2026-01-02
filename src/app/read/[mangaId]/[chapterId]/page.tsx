@@ -2,9 +2,8 @@
 
 import { use, useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useChapterImages, useAllChapters, useChapterNavigation, useMultiSourceImages, useSourceChapterNavigation } from '@/hooks/useApi';
+import { useMultiSourceImages, useSourceChapterNavigation } from '@/hooks/useApi';
 import { MangaReader } from '@/components/reader';
-import { buildImageUrls } from '@/lib/mangadex';
 import { getChaptersFromSource } from '@/lib/sources';
 import { Loader2, AlertCircle } from 'lucide-react';
 import type { MangaSource, SourceChapter } from '@/types';
@@ -28,8 +27,8 @@ function ReaderContent({ mangaId, chapterId }: { mangaId: string; chapterId: str
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Get source from URL query params (default to mangadex)
-  const source = (searchParams.get('source') as MangaSource) || 'mangadex';
+  // Get source from URL query params (default to comick)
+  const source = (searchParams.get('source') as MangaSource) || 'comick';
   const sourceId = searchParams.get('sourceId') || mangaId;
   
   const [chapters, setChapters] = useState<SourceChapter[]>([]);

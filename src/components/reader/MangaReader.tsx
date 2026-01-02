@@ -25,7 +25,12 @@ import Link from 'next/link';
 import { useReaderStore, useHistoryStore } from '@/store';
 import { cn, preloadImage, requestFullscreen, exitFullscreen, isFullscreen } from '@/lib/utils';
 import { SOURCE_INFO } from '@/lib/sources';
-import type { ReaderMode, ReaderTheme, MangaDexChapter, MangaSource } from '@/types';
+import type { ReaderMode, ReaderTheme, MangaSource, SourceChapter } from '@/types';
+
+interface ChapterNav {
+  id: string;
+  attributes: { chapter: string | null };
+}
 
 interface MangaReaderProps {
   mangaId: string;
@@ -34,8 +39,8 @@ interface MangaReaderProps {
   chapterId: string;
   chapterNumber: string;
   imageUrls: string[];
-  prevChapter: MangaDexChapter | null;
-  nextChapter: MangaDexChapter | null;
+  prevChapter: ChapterNav | null;
+  nextChapter: ChapterNav | null;
   source?: MangaSource;
   sourceId?: string;
 }
@@ -49,17 +54,17 @@ export function MangaReader({
   imageUrls,
   prevChapter,
   nextChapter,
-  source = 'mangadex',
+  source = 'comick',
   sourceId,
 }: MangaReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const readerRef = useRef<HTMLDivElement>(null);
   
   // Build chapter URLs with source info
-  const buildChapterUrl = (chapter: MangaDexChapter | null) => {
+  const buildChapterUrl = (chapter: ChapterNav | null) => {
     if (!chapter) return null;
     const params = new URLSearchParams();
-    if (source !== 'mangadex') params.set('source', source);
+    if (source !== 'comick') params.set('source', source);
     if (sourceId) params.set('sourceId', sourceId);
     const queryString = params.toString();
     return `/read/${mangaId}/${chapter.id}${queryString ? `?${queryString}` : ''}`;
@@ -573,7 +578,7 @@ export function MangaReader({
               </Link>
 
               <div className="flex items-center gap-2">
-                {source && source !== 'mangadex' && (
+                {source && source !== 'comick' && (
                   <span 
                     className="text-xs px-2 py-1 rounded-full"
                     style={{ backgroundColor: SOURCE_INFO[source]?.color || '#666' }}

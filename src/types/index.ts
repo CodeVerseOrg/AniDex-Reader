@@ -70,85 +70,6 @@ export interface AniListResponse {
   };
 }
 
-// MangaDex Types
-export interface MangaDexManga {
-  id: string;
-  type: 'manga';
-  attributes: {
-    title: Record<string, string>;
-    altTitles: Record<string, string>[];
-    description: Record<string, string>;
-    isLocked: boolean;
-    links: Record<string, string> | null;
-    originalLanguage: string;
-    lastVolume: string | null;
-    lastChapter: string | null;
-    publicationDemographic: string | null;
-    status: string;
-    year: number | null;
-    contentRating: string;
-    tags: MangaDexTag[];
-    state: string;
-    createdAt: string;
-    updatedAt: string;
-    availableTranslatedLanguages: string[];
-    latestUploadedChapter: string;
-  };
-  relationships: MangaDexRelationship[];
-}
-
-export interface MangaDexTag {
-  id: string;
-  type: 'tag';
-  attributes: {
-    name: Record<string, string>;
-    group: string;
-  };
-}
-
-export interface MangaDexRelationship {
-  id: string;
-  type: string;
-  attributes?: Record<string, unknown>;
-}
-
-export interface MangaDexChapter {
-  id: string;
-  type: 'chapter';
-  attributes: {
-    volume: string | null;
-    chapter: string | null;
-    title: string | null;
-    translatedLanguage: string;
-    externalUrl: string | null;
-    publishAt: string;
-    readableAt: string;
-    createdAt: string;
-    updatedAt: string;
-    pages: number;
-  };
-  relationships: MangaDexRelationship[];
-}
-
-export interface MangaDexChapterImages {
-  result: string;
-  baseUrl: string;
-  chapter: {
-    hash: string;
-    data: string[];
-    dataSaver: string[];
-  };
-}
-
-export interface MangaDexResponse<T> {
-  result: string;
-  response: string;
-  data: T;
-  limit?: number;
-  offset?: number;
-  total?: number;
-}
-
 // Reader Types
 export type ReaderMode = 'vertical' | 'horizontal' | 'webtoon';
 export type ReaderTheme = 'light' | 'dark' | 'sepia';
@@ -163,9 +84,9 @@ export interface ReaderSettings {
 }
 
 export interface ChapterNavigation {
-  currentChapter: MangaDexChapter;
-  prevChapter: MangaDexChapter | null;
-  nextChapter: MangaDexChapter | null;
+  currentChapter: SourceChapter;
+  prevChapter: SourceChapter | null;
+  nextChapter: SourceChapter | null;
 }
 
 // UI Types
@@ -185,10 +106,10 @@ export interface PaginationState {
   hasNextPage: boolean;
 }
 
-// Unified Manga Type (combines AniList + MangaDex data)
+// Unified Manga Type (combines AniList + Comick data)
 export interface UnifiedManga {
   anilistId: number;
-  mangadexId?: string;
+  comickId?: string;
   title: {
     romaji: string;
     english: string | null;
@@ -209,7 +130,7 @@ export interface UnifiedManga {
   isAdult: boolean;
 }
 // Multi-Source Types
-export type MangaSource = 'mangadex' | 'comick' | 'mangaplus' | 'mangasee';
+export type MangaSource = 'comick' | 'mangaplus' | 'mangasee';
 
 export interface SourceChapter {
   id: string;

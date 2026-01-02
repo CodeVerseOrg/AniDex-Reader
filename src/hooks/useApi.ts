@@ -8,21 +8,19 @@ import {
   getGenres,
 } from '@/lib/anilist';
 import {
-  searchMangaDex,
-  getChapters,
-  getAllChapters,
-  getChapterImages,
-  getRecentlyUpdated,
-  getMangaDexManga,
-  getAvailableLanguages,
-} from '@/lib/mangadex';
-import {
   getChaptersMultiSource,
   getChapterImagesFromSource,
   getMergedChapters,
   findMangaAcrossSources,
 } from '@/lib/sources';
-import type { AniListMedia, MangaDexChapter, MangaDexChapterImages, MangaSource, SourceChapter } from '@/types';
+import {
+  findComickManga,
+  getComickChapters,
+  getComickChapterImages,
+  getComickLanguages,
+  convertComickChapter,
+} from '@/lib/comick';
+import type { AniListMedia, MangaSource, SourceChapter } from '@/types';
 
 // AniList Hooks
 export function useTrendingManga(page = 1, perPage = 20) {
@@ -103,107 +101,61 @@ export function useGenres() {
   });
 }
 
-// MangaDex Hooks
-export function useMangaDexSearch(title: string, enabled = true) {
-  return useQuery({
-    queryKey: ['mangadex-search', title],
-    queryFn: () => searchMangaDex(title),
-    enabled: enabled && !!title,
-  });
-}
-
-export function useMangaDexManga(id: string | null) {
-  return useQuery({
-    queryKey: ['mangadex-manga', id],
-    queryFn: () => getMangaDexManga(id!),
-    enabled: !!id,
-  });
-}
-
-export function useChapters(
+// Comick Hooks
+export function useComickChapters(
   mangaId: string | null,
-  options?: {
-    language?: string;
-    limit?: number;
-    offset?: number;
-    order?: 'asc' | 'desc';
-  }
+  language: string = 'en',
+  page: number = 1,
+  limit: number = 100
 ) {
   return useQuery({
-    queryKey: ['chapters', mangaId, options],
-    queryFn: () => getChapters(mangaId!, options),
+    queryKey: ['comick-chapters', mangaId, language, page, limit],
+    queryFn: async () => {
+      const { chapters } = await getComickChapters(mangaId!, language, page, limit);
+      return chapters.map(convertComickChapter);
+    },
     enabled: !!mangaId,
   });
 }
 
-export function useAllChapters(mangaId: string | null, language = 'en') {
+export function useComickImages(chapterId: string | null) {
   return useQuery({
-    queryKey: ['all-chapters', mangaId, language],
-    queryFn: () => getAllChapters(mangaId!, language),
-    enabled: !!mangaId,
-  });
-}
-
-export function useChapterImages(chapterId: string | null) {
-  return useQuery({
-    queryKey: ['chapter-images', chapterId],
-    queryFn: () => getChapterImages(chapterId!),
+    queryKey: ['comick-images', chapterId],
+    queryFn: () => getComickChapterImages(chapterId!),
     enabled: !!chapterId,
     staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }
 
-export function useRecentlyUpdated(limit = 20, offset = 0) {
+export function useComickLanguages(mangaId: string | null) {
   return useQuery({
-    queryKey: ['recently-updated', limit, offset],
-    queryFn: () => getRecentlyUpdated(limit, offset),
-  });
-}
-
-export function useAvailableLanguages(mangaId: string | null) {
-  return useQuery({
-    queryKey: ['available-languages', mangaId],
-    queryFn: () => getAvailableLanguages(mangaId!),
+    queryKey: ['comick-languages', mangaId],
+    queryFn: () => getComickLanguages(mangaId!),
     enabled: !!mangaId,
   });
 }
 
-// Combined hook to get manga data from both sources
+// Combined hook to get manga data with chapters from Comick
 export function useMangaWithChapters(anilistId: number | null) {
   const anilistQuery = useMangaById(anilistId);
+  const title = anilistQuery.data?.title.romaji || null;
   
-  // Search MangaDex using the AniList title
-  const mangaDexSearchQuery = useMangaDexSearch(
-    anilistQuery.data?.title.romaji || '',
-    !!anilistQuery.data
-  );
-  
-  // Get MangaDex ID from search results (first match)
-  const mangaDexId = mangaDexSearchQuery.data?.[0]?.id || null;
-  
-  // Get chapters using MangaDex ID
-  const chaptersQuery = useAllChapters(mangaDexId);
+  // Get chapters from Comick
+  const chaptersQuery = useMultiSourceChapters(anilistId, title, 'en');
   
   return {
     manga: anilistQuery.data,
-    mangaDexId,
-    mangaDexData: mangaDexSearchQuery.data?.[0],
-    chapters: chaptersQuery.data || [],
-    isLoading:
-      anilistQuery.isLoading ||
-      mangaDexSearchQuery.isLoading ||
-      chaptersQuery.isLoading,
-    isError:
-      anilistQuery.isError ||
-      mangaDexSearchQuery.isError ||
-      chaptersQuery.isError,
-    error: anilistQuery.error || mangaDexSearchQuery.error || chaptersQuery.error,
+    sourceId: chaptersQuery.data?.sourceId || null,
+    chapters: chaptersQuery.data?.chapters || [],
+    isLoading: anilistQuery.isLoading || chaptersQuery.isLoading,
+    isError: anilistQuery.isError || chaptersQuery.isError,
+    error: anilistQuery.error || chaptersQuery.error,
   };
 }
 
 // Hook for chapter navigation
 export function useChapterNavigation(
-  chapters: MangaDexChapter[],
+  chapters: SourceChapter[],
   currentChapterId: string | null
 ) {
   const currentIndex = chapters.findIndex((ch) => ch.id === currentChapterId);

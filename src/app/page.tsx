@@ -47,7 +47,7 @@ export default function HomePage() {
             </h1>
             <p className="text-dark-300 text-lg md:text-xl max-w-2xl mx-auto mb-8">
               Your gateway to thousands of manga titles. Read for free with a clean,
-              modern interface powered by MangaDex.
+              modern interface powered by Comick.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link
@@ -165,7 +165,7 @@ export default function HomePage() {
             {
               icon: '🎨',
               title: 'Beautiful UI',
-              description: 'Clean, MangaDex-inspired interface with dark mode support',
+              description: 'Clean, modern interface with dark mode support',
             },
             {
               icon: '⚡',

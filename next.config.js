@@ -4,19 +4,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'uploads.mangadex.org',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.mangadex.network',
-      },
-      {
-        protocol: 'https',
         hostname: 's4.anilist.co',
-      },
-      {
-        protocol: 'https',
-        hostname: 'mangadex.org',
       },
       {
         protocol: 'https',

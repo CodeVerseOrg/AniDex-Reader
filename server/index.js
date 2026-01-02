@@ -46,10 +46,10 @@ app.post('/api/cache/clear', (req, res) => {
   res.json({ message: 'Cache cleared' });
 });
 
-// Proxy for MangaDex API with caching
-app.get('/api/mangadex/*', async (req, res) => {
+// Proxy for Comick API with caching
+app.get('/api/comick/*', async (req, res) => {
   const path = req.params[0];
-  const cacheKey = `mangadex:${path}:${JSON.stringify(req.query)}`;
+  const cacheKey = `comick:${path}:${JSON.stringify(req.query)}`;
   
   // Check cache first
   const cached = cache.get(cacheKey);
@@ -59,7 +59,7 @@ app.get('/api/mangadex/*', async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`https://api.mangadex.org/${path}`, {
+    const response = await axios.get(`https://api.comick.fun/${path}`, {
       params: req.query,
       headers: {
         'User-Agent': 'AniDex-Reader/1.0',
@@ -67,15 +67,15 @@ app.get('/api/mangadex/*', async (req, res) => {
     });
 
     // Cache the response
-    const ttl = path.includes('at-home') ? 1800 : 300; // 30 min for images, 5 min for others
+    const ttl = path.includes('chapter') ? 1800 : 300; // 30 min for chapters, 5 min for others
     cache.set(cacheKey, response.data, ttl);
     
     res.set('X-Cache', 'MISS');
     res.json(response.data);
   } catch (error) {
-    console.error('MangaDex proxy error:', error.message);
+    console.error('Comick proxy error:', error.message);
     res.status(error.response?.status || 500).json({
-      error: 'Failed to fetch from MangaDex',
+      error: 'Failed to fetch from Comick',
       message: error.message,
     });
   }
@@ -114,7 +114,7 @@ app.post('/api/anilist', async (req, res) => {
   }
 });
 
-// Search endpoint with combined AniList + MangaDex data
+// Search endpoint with combined AniList + Comick data
 app.get('/api/search', async (req, res) => {
   const { q: query, page = 1, perPage = 20 } = req.query;
   const cacheKey = `search:${query}:${page}:${perPage}`;

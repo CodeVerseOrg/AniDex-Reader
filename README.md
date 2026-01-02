@@ -1,6 +1,6 @@
 # 📖 AniDex Reader
 
-A modern, feature-rich manga reading website inspired by MangaDex. Built with Next.js, React, and Tailwind CSS.
+A modern, feature-rich manga reading website. Built with Next.js, React, and Tailwind CSS.
 
 ![AniDex Reader](https://via.placeholder.com/1200x630/111827/f97316?text=AniDex+Reader)
 
@@ -23,7 +23,7 @@ A modern, feature-rich manga reading website inspired by MangaDex. Built with Ne
 - **Chapter Navigation** - Quick access to previous/next chapters
 
 ### 🎨 UI/UX
-- **Modern Design** - Clean, MangaDex-inspired interface
+- **Modern Design** - Clean, modern interface
 - **Mobile-First** - Fully responsive design for all devices
 - **Dark Mode** - Eye-friendly dark theme by default
 - **Smooth Animations** - Framer Motion powered transitions
@@ -43,7 +43,7 @@ A modern, feature-rich manga reading website inspired by MangaDex. Built with Ne
 | Frontend | Next.js 14, React 18, TypeScript |
 | Styling | Tailwind CSS, Framer Motion |
 | State | Zustand, React Query |
-| APIs | AniList GraphQL, MangaDex REST |
+| APIs | AniList GraphQL, Comick REST |
 | Backend | Node.js, Express |
 | Caching | node-cache |
 
@@ -70,7 +70,8 @@ anidex-reader/
 │   │   └── ui/                # Skeleton, SearchInput, Filters
 │   ├── lib/
 │   │   ├── anilist.ts         # AniList GraphQL API client
-│   │   ├── mangadex.ts        # MangaDex REST API client
+│   │   ├── comick.ts          # Comick REST API client
+│   │   ├── sources.ts         # Multi-source chapter handling
 │   │   └── utils.ts           # Utility functions
 │   ├── hooks/
 │   │   └── useApi.ts          # React Query hooks
@@ -156,24 +157,24 @@ const TRENDING_QUERY = gql`
 `;
 ```
 
-### MangaDex REST API
+### Comick REST API
 
 Used for chapters and reading images.
 
 ```typescript
 // Get chapters for a manga
-const chapters = await axios.get('https://api.mangadex.org/chapter', {
+const chapters = await axios.get('https://api.comick.fun/comic/{hid}/chapters', {
   params: {
-    manga: mangaId,
-    translatedLanguage: ['en'],
-    order: { chapter: 'desc' },
+    lang: 'en',
+    page: 1,
+    limit: 100,
   },
 });
 
 // Get chapter images
-const images = await axios.get(`https://api.mangadex.org/at-home/server/${chapterId}`);
-const imageUrls = images.data.chapter.data.map(
-  (file) => `${images.data.baseUrl}/data/${images.data.chapter.hash}/${file}`
+const images = await axios.get(`https://api.comick.fun/chapter/${hid}`);
+const imageUrls = images.data.chapter.md_images.map(
+  (img) => `https://meo.comick.pictures/${img.b2key}`
 );
 ```
 
@@ -226,7 +227,7 @@ const imageUrls = images.data.chapter.data.map(
 
 #### Vercel Features Used
 
-- **Serverless Functions** - API routes for MangaDex/Comick proxying
+- **Serverless Functions** - API routes for Comick proxying
 - **Edge Caching** - Automatic CDN caching for API responses  
 - **Standalone Output** - Optimized production build
 - **Zero Config** - Works out of the box with `vercel.json`
@@ -295,14 +296,14 @@ pm2 start server/index.js --name anidex-api
 
 ### Important Notices
 
-- **No Image Hosting** - All images are streamed directly from MangaDex CDN
+- **No Image Hosting** - All images are streamed directly from Comick CDN
 - **Metadata Only** - We only store/cache API responses, not copyrighted content
 - **DMCA Compliant** - See [/dmca](/dmca) page for takedown procedures
 
 ### Credits
 
 - [AniList](https://anilist.co) - Manga metadata and search
-- [MangaDex](https://mangadex.org) - Chapters and images
+- [Comick](https://comick.io) - Chapters and images
 - Scanlation groups - Translations and cleaning
 - Original creators - Manga authors and artists
 
@@ -341,7 +342,7 @@ JWT_SECRET=your-secret-key
 ### Common Issues
 
 1. **Images not loading**
-   - Check if MangaDex CDN is accessible
+   - Check if Comick CDN is accessible
    - Verify CORS settings in `next.config.js`
 
 2. **API rate limiting**

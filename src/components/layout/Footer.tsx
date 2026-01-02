@@ -36,7 +36,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-dark-400 text-sm">
-              A modern manga reading experience powered by MangaDex and AniList.
+              A modern manga reading experience powered by Comick and AniList.
               Read your favorite manga for free.
             </p>
             <div className="flex space-x-4">
@@ -129,18 +129,18 @@ export function Footer() {
               </a>{' '}
               &{' '}
               <a
-                href="https://mangadex.org"
+                href="https://comick.io"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary-500 hover:underline"
               >
-                MangaDex
+                Comick
               </a>
             </p>
           </div>
           <p className="text-dark-600 text-xs text-center mt-4">
             AniDex Reader does not host any images. All manga content is sourced
-            directly from MangaDex CDN. All credits go to the respective
+            directly from Comick CDN. All credits go to the respective
             scanlation groups and original creators.
           </p>
         </div>

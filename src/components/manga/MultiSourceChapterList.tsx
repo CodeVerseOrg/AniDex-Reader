@@ -79,7 +79,7 @@ export function MultiSourceChapterList({
   // Build URL with source info
   const buildChapterUrl = (chapter: SourceChapter) => {
     const params = new URLSearchParams();
-    if (chapter.source !== 'mangadex') params.set('source', chapter.source);
+    if (chapter.source !== 'comick') params.set('source', chapter.source);
     params.set('sourceId', sourceId);
     const queryString = params.toString();
     return `/read/${mangaId}/${chapter.id}${queryString ? `?${queryString}` : ''}`;
@@ -284,7 +284,7 @@ function ChapterItem({
               </span>
             )}
             {/* Source badge for mixed sources */}
-            {chapter.source !== 'mangadex' && (
+            {chapter.source !== 'comick' && (
               <span 
                 className="text-xs px-1.5 py-0.5 rounded text-white"
                 style={{ backgroundColor: SOURCE_INFO[chapter.source]?.color || '#666' }}

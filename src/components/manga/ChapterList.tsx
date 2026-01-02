@@ -10,12 +10,35 @@ import {
   Globe,
   BookOpen,
 } from 'lucide-react';
-import type { MangaDexChapter } from '@/types';
-import { formatChapterNumber, getScanlationGroup, groupChaptersByVolume } from '@/lib/mangadex';
+import type { SourceChapter } from '@/types';
 import { getRelativeTime, getLanguageName, cn } from '@/lib/utils';
 
+// Helper functions for chapter formatting
+function formatChapterNumber(chapter: SourceChapter): string {
+  const chapterNum = chapter.chapter || '0';
+  const title = chapter.title;
+  if (title) {
+    return `Chapter ${chapterNum}: ${title}`;
+  }
+  return `Chapter ${chapterNum}`;
+}
+
+function groupChaptersByVolume(chapters: SourceChapter[]): Map<string, SourceChapter[]> {
+  const groups = new Map<string, SourceChapter[]>();
+  
+  for (const chapter of chapters) {
+    const volume = chapter.volume || 'No Volume';
+    if (!groups.has(volume)) {
+      groups.set(volume, []);
+    }
+    groups.get(volume)!.push(chapter);
+  }
+  
+  return groups;
+}
+
 interface ChapterListProps {
-  chapters: MangaDexChapter[];
+  chapters: SourceChapter[];
   mangaId: string;
   currentLanguage: string;
   onLanguageChange: (lang: string) => void;
@@ -34,8 +57,8 @@ export function ChapterList({
   const [expandedVolumes, setExpandedVolumes] = useState<Set<string>>(new Set());
 
   const sortedChapters = [...chapters].sort((a, b) => {
-    const aNum = parseFloat(a.attributes.chapter || '0');
-    const bNum = parseFloat(b.attributes.chapter || '0');
+    const aNum = parseFloat(a.chapter || '0');
+    const bNum = parseFloat(b.chapter || '0');
     return sortOrder === 'desc' ? bNum - aNum : aNum - bNum;
   });
 
@@ -167,14 +190,14 @@ export function ChapterList({
 }
 
 interface ChapterRowProps {
-  chapter: MangaDexChapter;
+  chapter: SourceChapter;
   mangaId: string;
 }
 
 function ChapterRow({ chapter, mangaId }: ChapterRowProps) {
-  const scanlationGroup = getScanlationGroup(chapter);
+  const scanlationGroup = chapter.scanlationGroup || 'Unknown';
   const chapterTitle = formatChapterNumber(chapter);
-  const uploadDate = getRelativeTime(chapter.attributes.publishAt);
+  const uploadDate = getRelativeTime(chapter.publishedAt);
 
   return (
     <motion.a
@@ -201,9 +224,9 @@ function ChapterRow({ chapter, mangaId }: ChapterRowProps) {
       </div>
 
       {/* Page Count */}
-      {chapter.attributes.pages > 0 && (
+      {chapter.pages > 0 && (
         <span className="text-dark-400 text-sm">
-          {chapter.attributes.pages} pages
+          {chapter.pages} pages
         </span>
       )}
     </motion.a>
