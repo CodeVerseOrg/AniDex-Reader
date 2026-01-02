@@ -75,23 +75,56 @@ function ReaderContent({ mangaId, chapterId }: { mangaId: string; chapterId: str
 
   if (imagesError || !multiSourceImages || multiSourceImages.images.length === 0) {
     return (
-      <div className="fixed inset-0 bg-dark-950 flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">Failed to Load Chapter</h1>
-          <p className="text-dark-400 mb-4">The chapter images could not be loaded.</p>
+      <div className="fixed inset-0 bg-dark-950 flex items-center justify-center p-4">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-16 h-16 text-amber-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-white mb-3">Chapter Not Available</h1>
+          <p className="text-dark-300 mb-2">
+            This chapter's images could not be loaded.
+          </p>
+          <p className="text-dark-400 text-sm mb-6">
+            This manga may be licensed and not available through free sources. 
+            Try reading on official platforms like{' '}
+            <a 
+              href="https://www.webtoons.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary-400 hover:underline"
+            >
+              Webtoon
+            </a>
+            ,{' '}
+            <a 
+              href="https://www.crunchyroll.com/comics" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary-400 hover:underline"
+            >
+              Crunchyroll
+            </a>
+            , or{' '}
+            <a 
+              href="https://www.viz.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-primary-400 hover:underline"
+            >
+              VIZ
+            </a>
+            .
+          </p>
           <div className="flex gap-4 justify-center">
             <button
               onClick={() => router.back()}
-              className="px-4 py-2 bg-dark-800 rounded-lg hover:bg-dark-700 transition-colors"
+              className="px-6 py-2.5 bg-dark-800 rounded-lg hover:bg-dark-700 transition-colors text-white"
             >
               Go Back
             </button>
             <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-primary-500 rounded-lg hover:bg-primary-600 transition-colors"
+              onClick={() => router.push(`/manga/${mangaId}`)}
+              className="px-6 py-2.5 bg-primary-500 rounded-lg hover:bg-primary-600 transition-colors text-white"
             >
-              Retry
+              View Manga
             </button>
           </div>
         </div>
