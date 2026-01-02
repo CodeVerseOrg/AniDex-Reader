@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X } from 'lucide-react';
-import { cn, debounce } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 interface SearchInputProps {
   value: string;
@@ -23,19 +23,36 @@ export function SearchInput({
 }: SearchInputProps) {
   const [localValue, setLocalValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sync external value changes
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
 
-  // Debounced onChange
-  useEffect(() => {
-    const debouncedOnChange = debounce(onChange, debounceMs);
-    if (localValue !== value) {
-      debouncedOnChange(localValue);
+  // Debounced onChange - only trigger when localValue changes from user input
+  const handleChange = useCallback((newValue: string) => {
+    setLocalValue(newValue);
+    
+    // Clear existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-  }, [localValue, onChange, debounceMs, value]);
+    
+    // Set new timeout for debounced onChange
+    timeoutRef.current = setTimeout(() => {
+      onChange(newValue);
+    }, debounceMs);
+  }, [onChange, debounceMs]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleClear = () => {
     setLocalValue('');
@@ -50,7 +67,7 @@ export function SearchInput({
         ref={inputRef}
         type="text"
         value={localValue}
-        onChange={(e) => setLocalValue(e.target.value)}
+        onChange={(e) => handleChange(e.target.value)}
         placeholder={placeholder}
         autoFocus={autoFocus}
         className="w-full pl-12 pr-10 py-3 bg-dark-800 border border-dark-700 rounded-xl text-white placeholder-dark-400 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all"
