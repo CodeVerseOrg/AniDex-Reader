@@ -54,7 +54,7 @@ export function MangaReader({
   imageUrls,
   prevChapter,
   nextChapter,
-  source = 'mangaplus',
+  source = 'mangadex',
   sourceId,
 }: MangaReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
