@@ -10,11 +10,9 @@ import {
   Calendar,
   Globe,
   BookOpen,
-  Database,
 } from 'lucide-react';
 import type { SourceChapter, MangaSource } from '@/types';
 import { getRelativeTime, getLanguageName, cn } from '@/lib/utils';
-import { SOURCE_INFO } from '@/lib/sources';
 
 interface MultiSourceChapterListProps {
   chapters: SourceChapter[];
@@ -91,8 +89,6 @@ export function MultiSourceChapterList({
     return `${vol}Ch. ${chapter.chapter}`;
   };
 
-  const sourceInfo = SOURCE_INFO[source];
-
   return (
     <div className="bg-dark-800/50 border border-dark-700 rounded-xl overflow-hidden">
       {/* Header */}
@@ -105,40 +101,6 @@ export function MultiSourceChapterList({
           </h2>
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Source Selector */}
-            {availableSources && availableSources.length > 1 && onSourceChange && (
-              <div className="flex items-center gap-2">
-                <Database className="w-4 h-4 text-dark-400" />
-                <select
-                  value={source}
-                  onChange={(e) => {
-                    const selectedSource = availableSources.find(
-                      (s) => s.source === e.target.value
-                    );
-                    if (selectedSource) {
-                      onSourceChange(selectedSource.source, selectedSource.sourceId);
-                    }
-                  }}
-                  className="bg-dark-700 border border-dark-600 text-white text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                >
-                  {availableSources.map((s) => (
-                    <option key={s.source} value={s.source}>
-                      {SOURCE_INFO[s.source]?.name || s.source}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* Current Source Badge */}
-            <div 
-              className="flex items-center gap-1 px-2 py-1 rounded-full text-xs text-white"
-              style={{ backgroundColor: sourceInfo?.color || '#666' }}
-            >
-              <span>{sourceInfo?.icon}</span>
-              <span>{sourceInfo?.name || source}</span>
-            </div>
-
             {/* Language Selector */}
             <div className="flex items-center gap-2">
               <Globe className="w-4 h-4 text-dark-400" />
@@ -188,7 +150,7 @@ export function MultiSourceChapterList({
       <div className="max-h-[600px] overflow-y-auto">
         {chapters.length === 0 ? (
           <div className="p-8 text-center text-dark-400">
-            No chapters available for this language from {sourceInfo?.name || source}.
+            No chapters available for this language.
           </div>
         ) : groupByVolume && groupedChapters ? (
           // Grouped view
@@ -283,13 +245,6 @@ function ChapterItem({
                 - {chapter.title}
               </span>
             )}
-            {/* Source badge */}
-            <span 
-              className="text-xs px-1.5 py-0.5 rounded text-white"
-              style={{ backgroundColor: SOURCE_INFO[chapter.source]?.color || '#666' }}
-            >
-              {SOURCE_INFO[chapter.source]?.icon}
-            </span>
           </div>
           <div className="flex items-center gap-4 mt-1 text-sm text-dark-400">
             {chapter.scanlationGroup && (
