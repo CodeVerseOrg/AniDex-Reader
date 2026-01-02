@@ -6,18 +6,6 @@ const nextConfig = {
         protocol: 'https',
         hostname: 's4.anilist.co',
       },
-      {
-        protocol: 'https',
-        hostname: 'meo.comick.pictures',
-      },
-      {
-        protocol: 'https',
-        hostname: 'meo3.comick.pictures',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.comick.pictures',
-      },
       // MangaPlus image domains
       {
         protocol: 'https',

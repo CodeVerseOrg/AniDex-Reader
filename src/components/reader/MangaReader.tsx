@@ -54,7 +54,7 @@ export function MangaReader({
   imageUrls,
   prevChapter,
   nextChapter,
-  source = 'comick',
+  source = 'mangaplus',
   sourceId,
 }: MangaReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -64,7 +64,7 @@ export function MangaReader({
   const buildChapterUrl = (chapter: ChapterNav | null) => {
     if (!chapter) return null;
     const params = new URLSearchParams();
-    if (source !== 'comick') params.set('source', source);
+    params.set('source', source);
     if (sourceId) params.set('sourceId', sourceId);
     const queryString = params.toString();
     return `/read/${mangaId}/${chapter.id}${queryString ? `?${queryString}` : ''}`;
@@ -578,7 +578,7 @@ export function MangaReader({
               </Link>
 
               <div className="flex items-center gap-2">
-                {source && source !== 'comick' && (
+                {source && (
                   <span 
                     className="text-xs px-2 py-1 rounded-full"
                     style={{ backgroundColor: SOURCE_INFO[source]?.color || '#666' }}

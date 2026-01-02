@@ -11,7 +11,7 @@ description: A modern, feature-rich manga reading website built with Next.js, Re
 AniDex Reader is a modern manga reading platform that provides a seamless reading experience with features like multiple reading modes, theme customization, and smart chapter navigation.
 
 {% hint style="info" %}
-This project uses [AniList](https://anilist.co) for manga metadata and [Comick](https://comick.io) for chapter content.
+This project uses [AniList](https://anilist.co) for manga metadata and [MangaPlus](https://mangaplus.shueisha.co.jp) (Shueisha) for chapter content.
 {% endhint %}
 
 ## Features
@@ -21,7 +21,7 @@ This project uses [AniList](https://anilist.co) for manga metadata and [Comick](
 * **Home Page** - Trending manga, popular titles, top rated, and recently updated
 * **Advanced Search** - Search with filters for genre, status, year, and popularity
 * **Manga Details** - Comprehensive information with cover, description, genres, tags, and ratings
-* **Chapter List** - Browse chapters with language selector, sorting, and volume grouping
+* **Chapter List** - Browse chapters with sorting and volume grouping
 
 ### Manga Reader
 
@@ -57,7 +57,7 @@ This project uses [AniList](https://anilist.co) for manga metadata and [Comick](
 | Frontend | Next.js 14, React 18, TypeScript |
 | Styling  | Tailwind CSS, Framer Motion    |
 | State    | Zustand, React Query           |
-| APIs     | AniList GraphQL, Comick REST   |
+| APIs     | AniList GraphQL, MangaPlus REST |
 | Backend  | Node.js, Express               |
 | Caching  | node-cache                     |
 
@@ -84,8 +84,8 @@ anidex-reader/
 │   │   └── ui/                # Skeleton, SearchInput, Filters
 │   ├── lib/
 │   │   ├── anilist.ts         # AniList GraphQL API client
-│   │   ├── comick.ts          # Comick REST API client
-│   │   ├── sources.ts         # Multi-source chapter handling
+│   │   ├── mangaplus.ts       # MangaPlus REST API client
+│   │   ├── sources.ts         # Chapter source handling
 │   │   └── utils.ts           # Utility functions
 │   ├── hooks/
 │   │   └── useApi.ts          # React Query hooks
@@ -184,32 +184,52 @@ const TRENDING_QUERY = gql`
 {% endtab %}
 {% endtabs %}
 
-### Comick REST API
+### MangaPlus REST API
 
-Used for chapters and reading images.
+Used for official Shueisha manga chapters and images.
 
 {% tabs %}
-{% tab title="Get Chapters" %}
+{% tab title="Get Manga Details" %}
 ```typescript
-const chapters = await axios.get('https://api.comick.fun/comic/{hid}/chapters', {
-  params: {
-    lang: 'en',
-    page: 1,
-    limit: 100,
-  },
-});
+// Get manga title details with chapters
+const response = await fetch(
+  'https://jumpg-webapi.tokyo-cdn.com/api/title_detailV3?title_id=100037&format=json'
+);
+const data = await response.json();
+const chapters = data.success.titleDetailView.chapterListGroup;
 ```
 {% endtab %}
 
-{% tab title="Get Images" %}
+{% tab title="Get Chapter Images" %}
 ```typescript
-const images = await axios.get(`https://api.comick.fun/chapter/${hid}`);
-const imageUrls = images.data.chapter.md_images.map(
-  (img) => `https://meo.comick.pictures/${img.b2key}`
+// Get chapter images
+const response = await fetch(
+  `https://jumpg-webapi.tokyo-cdn.com/api/manga_viewer?chapter_id=${chapterId}&split=yes&img_quality=high&format=json`
 );
+const data = await response.json();
+const pages = data.success.mangaViewer.pages
+  .filter(p => p.mangaPage)
+  .map(p => p.mangaPage.imageUrl);
 ```
 {% endtab %}
 {% endtabs %}
+
+### Available MangaPlus Titles
+
+MangaPlus offers official translations of popular Shueisha manga:
+
+| Title | MangaPlus ID |
+| ----- | ------------ |
+| One Piece | 100020 |
+| My Hero Academia | 100017 |
+| Jujutsu Kaisen | 100034 |
+| Chainsaw Man | 100037 |
+| Spy × Family | 100056 |
+| Dandadan | 100147 |
+| Black Clover | 100003 |
+| Boruto | 100006 |
+| Dragon Ball Super | 100011 |
+| One Punch Man | 100021 |
 
 ## Reader Keyboard Shortcuts
 
@@ -266,11 +286,11 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
 
 **Step 5: Deploy**
 
-Click "Deploy" and your app will be live in \~2 minutes!
+Click "Deploy" and your app will be live in ~2 minutes!
 
 #### Vercel Features Used
 
-* **Serverless Functions** - API routes for Comick proxying
+* **Serverless Functions** - API routes for MangaPlus proxying
 * **Edge Caching** - Automatic CDN caching for API responses
 * **Standalone Output** - Optimized production build
 * **Zero Config** - Works out of the box with `vercel.json`
@@ -345,18 +365,18 @@ pm2 start server/index.js --name anidex-api
 **Disclaimer:** This project is for educational purposes only. Please support official manga releases.
 {% endhint %}
 
-* **No Image Hosting** - All images are streamed directly from Comick CDN
+* **No Image Hosting** - All images are streamed directly from MangaPlus CDN
 * **Metadata Only** - We only store/cache API responses, not copyrighted content
 * **DMCA Compliant** - See [/dmca](/dmca) page for takedown procedures
 
 ### Credits
 
-| Service                              | Purpose                   |
-| ------------------------------------ | ------------------------- |
-| [AniList](https://anilist.co)        | Manga metadata and search |
-| [Comick](https://comick.io)          | Chapters and images       |
-| Scanlation groups                    | Translations and cleaning |
-| Original creators                    | Manga authors and artists |
+| Service                                          | Purpose                   |
+| ------------------------------------------------ | ------------------------- |
+| [AniList](https://anilist.co)                    | Manga metadata and search |
+| [MangaPlus](https://mangaplus.shueisha.co.jp)    | Official chapters and images |
+| Shueisha                                         | Publisher and content owner |
+| Original creators                                | Manga authors and artists |
 
 ## Contributing
 
@@ -399,46 +419,44 @@ JWT_SECRET=your-secret-key
 **Problem:** Manga images fail to load or show broken image icons.
 
 **Solutions:**
-
-* Check if Comick CDN is accessible
-* Verify CORS settings in `next.config.js`
-* Clear browser cache
+1. Check if MangaPlus CDN is accessible in your region
+2. Ensure `next.config.js` has correct image domains configured
+3. Clear browser cache and try again
+4. Check browser console for CORS errors
 {% endtab %}
 
-{% tab title="API rate limiting" %}
-**Problem:** API requests are being throttled or blocked.
+{% tab title="Chapters not found" %}
+**Problem:** No chapters appear for a manga title.
 
 **Solutions:**
-
-* Enable server-side caching
-* Use the backend proxy
-* Implement request debouncing
+1. The manga may not be available on MangaPlus
+2. MangaPlus only provides certain chapters (first/latest)
+3. Check if the title is in the supported titles list
+4. Try searching for the exact Japanese title
 {% endtab %}
 
-{% tab title="Search not working" %}
-**Problem:** Search returns no results or errors.
+{% tab title="Build errors" %}
+**Problem:** Build fails with TypeScript or ESLint errors.
 
 **Solutions:**
-
-* Ensure AniList API is reachable
-* Check for GraphQL query errors in console
-* Verify network connectivity
+1. Run `npm install` to ensure all dependencies are installed
+2. Check TypeScript errors: `npm run type-check`
+3. Fix lint errors: `npm run lint:fix`
+4. Clear `.next` folder and rebuild
 {% endtab %}
 {% endtabs %}
 
-### Debug Mode
+## License
 
-```bash
-# Enable debug logging
-DEBUG=* npm run dev
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-***
+---
 
 <div align="center">
-
-**Made with ❤️ for manga readers everywhere**
-
-[⭐ Star this repo](https://github.com/yourusername/anidex-reader/stargazers) • [🐛 Report Bug](https://github.com/yourusername/anidex-reader/issues) • [✨ Request Feature](https://github.com/yourusername/anidex-reader/issues)
-
+  <p>Built with ❤️ using Next.js and React</p>
+  <p>
+    <a href="https://github.com/yourusername/anidex-reader">GitHub</a> •
+    <a href="https://anidex-reader.vercel.app">Demo</a> •
+    <a href="/dmca">DMCA</a>
+  </p>
 </div>

@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'AniDex Reader - Read Manga Online Free',
-  description: 'A modern manga reading website powered by Comick and AniList. Read your favorite manga for free with a clean, modern interface.',
+  description: 'A modern manga reading website powered by MangaPlus and AniList. Read your favorite manga for free with a clean, modern interface.',
   keywords: ['manga', 'read manga', 'manga online', 'free manga', 'anime', 'manhwa', 'manhua'],
   authors: [{ name: 'AniDex Reader' }],
   openGraph: {

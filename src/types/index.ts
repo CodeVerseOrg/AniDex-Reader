@@ -130,7 +130,7 @@ export interface UnifiedManga {
   isAdult: boolean;
 }
 // Multi-Source Types
-export type MangaSource = 'comick' | 'mangaplus' | 'mangasee';
+export type MangaSource = 'mangaplus' | 'mangasee';
 
 export interface SourceChapter {
   id: string;
@@ -149,47 +149,6 @@ export interface SourceChapterImages {
   source: MangaSource;
   images: string[];
   baseUrl?: string;
-}
-
-// Comick.fun Types
-export interface ComickManga {
-  id: number;
-  hid: string;
-  slug: string;
-  title: string;
-  country: string;
-  status: number;
-  links: Record<string, string>;
-  last_chapter: number | null;
-  chapter_count: number;
-  demographic: number | null;
-  genres: { id: number; name: string; slug: string }[];
-  md_covers: { b2key: string; w: number; h: number }[];
-}
-
-export interface ComickChapter {
-  id: number;
-  hid: string;
-  chap: string | null;
-  vol: string | null;
-  title: string | null;
-  lang: string;
-  created_at: string;
-  updated_at: string;
-  up_count: number;
-  group_name: string[] | null;
-  md_groups?: { title: string }[];
-}
-
-export interface ComickChapterImages {
-  chapter: {
-    id: number;
-    chap: string;
-    title: string | null;
-    vol: string | null;
-    lang: string;
-    md_images: { b2key: string; w: number; h: number; name: string }[];
-  };
 }
 
 // MangaSee Types  

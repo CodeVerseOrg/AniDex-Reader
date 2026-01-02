@@ -24,7 +24,7 @@ export default function DMCAPage() {
                 </h2>
                 <p className="text-dark-300">
                   AniDex Reader does not host, store, or distribute any copyrighted
-                  content. All manga images are sourced directly from Comick CDN,
+                  content. All manga images are sourced directly from MangaPlus (Shueisha),
                   and metadata is obtained from AniList's public API.
                 </p>
               </div>
@@ -40,8 +40,8 @@ export default function DMCAPage() {
             <div className="space-y-4 text-dark-300">
               <p>
                 <strong className="text-white">Images:</strong> All manga pages and
-                cover images are streamed directly from Comick's content delivery
-                network. We do not host or cache any images on our servers.
+                cover images are streamed directly from MangaPlus (Shueisha's official
+                platform). We do not host or cache any images on our servers.
               </p>
               <p>
                 <strong className="text-white">Metadata:</strong> Manga information
@@ -50,7 +50,7 @@ export default function DMCAPage() {
               </p>
               <p>
                 <strong className="text-white">Chapter Data:</strong> Chapter
-                listings and reading order are provided by Comick's public API.
+                listings and reading order are provided by MangaPlus's public API.
               </p>
             </div>
           </section>
@@ -70,12 +70,12 @@ export default function DMCAPage() {
                   We do not host the content directly. For image removals, please
                   contact{' '}
                   <a
-                    href="https://comick.io/terms"
+                    href="https://mangaplus.shueisha.co.jp/help"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary-500 hover:underline"
                   >
-                    Comick directly
+                    MangaPlus/Shueisha directly
                   </a>
                   .
                 </li>

@@ -13,13 +13,6 @@ import {
   getMergedChapters,
   findMangaAcrossSources,
 } from '@/lib/sources';
-import {
-  findComickManga,
-  getComickChapters,
-  getComickChapterImages,
-  getComickLanguages,
-  convertComickChapter,
-} from '@/lib/comick';
 import type { AniListMedia, MangaSource, SourceChapter } from '@/types';
 
 // AniList Hooks
@@ -101,76 +94,7 @@ export function useGenres() {
   });
 }
 
-// Comick Hooks
-export function useComickChapters(
-  mangaId: string | null,
-  language: string = 'en',
-  page: number = 1,
-  limit: number = 100
-) {
-  return useQuery({
-    queryKey: ['comick-chapters', mangaId, language, page, limit],
-    queryFn: async () => {
-      const { chapters } = await getComickChapters(mangaId!, language, page, limit);
-      return chapters.map(convertComickChapter);
-    },
-    enabled: !!mangaId,
-  });
-}
-
-export function useComickImages(chapterId: string | null) {
-  return useQuery({
-    queryKey: ['comick-images', chapterId],
-    queryFn: () => getComickChapterImages(chapterId!),
-    enabled: !!chapterId,
-    staleTime: 30 * 60 * 1000, // 30 minutes
-  });
-}
-
-export function useComickLanguages(mangaId: string | null) {
-  return useQuery({
-    queryKey: ['comick-languages', mangaId],
-    queryFn: () => getComickLanguages(mangaId!),
-    enabled: !!mangaId,
-  });
-}
-
-// Combined hook to get manga data with chapters from Comick
-export function useMangaWithChapters(anilistId: number | null) {
-  const anilistQuery = useMangaById(anilistId);
-  const title = anilistQuery.data?.title.romaji || null;
-  
-  // Get chapters from Comick
-  const chaptersQuery = useMultiSourceChapters(anilistId, title, 'en');
-  
-  return {
-    manga: anilistQuery.data,
-    sourceId: chaptersQuery.data?.sourceId || null,
-    chapters: chaptersQuery.data?.chapters || [],
-    isLoading: anilistQuery.isLoading || chaptersQuery.isLoading,
-    isError: anilistQuery.isError || chaptersQuery.isError,
-    error: anilistQuery.error || chaptersQuery.error,
-  };
-}
-
-// Hook for chapter navigation
-export function useChapterNavigation(
-  chapters: SourceChapter[],
-  currentChapterId: string | null
-) {
-  const currentIndex = chapters.findIndex((ch) => ch.id === currentChapterId);
-  
-  return {
-    currentChapter: chapters[currentIndex] || null,
-    prevChapter: currentIndex > 0 ? chapters[currentIndex - 1] : null,
-    nextChapter:
-      currentIndex < chapters.length - 1 ? chapters[currentIndex + 1] : null,
-    currentIndex,
-    totalChapters: chapters.length,
-  };
-}
-
-// Multi-Source Hooks
+// Multi-Source Hooks (MangaPlus)
 export function useMultiSourceChapters(
   anilistId: number | null,
   title: string | null,
