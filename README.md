@@ -1,53 +1,67 @@
-# 📖 AniDex Reader
+---
+description: A modern, feature-rich manga reading website built with Next.js, React, and Tailwind CSS.
+---
 
-A modern, feature-rich manga reading website. Built with Next.js, React, and Tailwind CSS.
+# AniDex Reader
 
-![AniDex Reader](https://via.placeholder.com/1200x630/111827/f97316?text=AniDex+Reader)
+<figure><img src="https://via.placeholder.com/1200x630/111827/f97316?text=AniDex+Reader" alt="AniDex Reader Banner"><figcaption><p>AniDex Reader - Modern Manga Reading Experience</p></figcaption></figure>
 
-## ✨ Features
+## Overview
 
-### 📚 Core Features
-- **Home Page** - Trending manga, popular titles, top rated, and recently updated
-- **Advanced Search** - Search with filters for genre, status, year, and popularity
-- **Manga Details** - Comprehensive information with cover, description, genres, tags, and ratings
-- **Chapter List** - Browse chapters with language selector, sorting, and volume grouping
+AniDex Reader is a modern manga reading platform that provides a seamless reading experience with features like multiple reading modes, theme customization, and smart chapter navigation.
 
-### 📖 Manga Reader (High Priority)
-- **Multiple Reading Modes** - Vertical scroll and horizontal page-by-page
-- **Theme Options** - Light, dark, and sepia reading modes
-- **Zoom Controls** - Zoom in/out with mouse wheel or keyboard
-- **Fullscreen Mode** - Immersive reading experience
-- **Keyboard Navigation** - Arrow keys, WASD, and space for navigation
-- **Page Progress** - Visual progress indicator and page slider
-- **Smart Preloading** - Preloads upcoming pages for smooth reading
-- **Chapter Navigation** - Quick access to previous/next chapters
+{% hint style="info" %}
+This project uses [AniList](https://anilist.co) for manga metadata and [Comick](https://comick.io) for chapter content.
+{% endhint %}
 
-### 🎨 UI/UX
-- **Modern Design** - Clean, modern interface
-- **Mobile-First** - Fully responsive design for all devices
-- **Dark Mode** - Eye-friendly dark theme by default
-- **Smooth Animations** - Framer Motion powered transitions
-- **Skeleton Loaders** - Loading states for better UX
-- **Infinite Scroll** - Seamless content loading
+## Features
 
-### ⚡ Performance
-- **API Caching** - Server-side caching for faster responses
-- **Image Optimization** - Next.js Image component with lazy loading
-- **Debounced Search** - Optimized API calls
-- **State Management** - Zustand for efficient state handling
+### Core Features
 
-## 🛠️ Tech Stack
+* **Home Page** - Trending manga, popular titles, top rated, and recently updated
+* **Advanced Search** - Search with filters for genre, status, year, and popularity
+* **Manga Details** - Comprehensive information with cover, description, genres, tags, and ratings
+* **Chapter List** - Browse chapters with language selector, sorting, and volume grouping
 
-| Category | Technology |
-|----------|------------|
+### Manga Reader
+
+* **Multiple Reading Modes** - Vertical scroll and horizontal page-by-page
+* **Theme Options** - Light, dark, and sepia reading modes
+* **Zoom Controls** - Zoom in/out with mouse wheel or keyboard
+* **Fullscreen Mode** - Immersive reading experience
+* **Keyboard Navigation** - Arrow keys, WASD, and space for navigation
+* **Page Progress** - Visual progress indicator and page slider
+* **Smart Preloading** - Preloads upcoming pages for smooth reading
+* **Chapter Navigation** - Quick access to previous/next chapters
+
+### UI/UX
+
+* **Modern Design** - Clean, modern interface
+* **Mobile-First** - Fully responsive design for all devices
+* **Dark Mode** - Eye-friendly dark theme by default
+* **Smooth Animations** - Framer Motion powered transitions
+* **Skeleton Loaders** - Loading states for better UX
+* **Infinite Scroll** - Seamless content loading
+
+### Performance
+
+* **API Caching** - Server-side caching for faster responses
+* **Image Optimization** - Next.js Image component with lazy loading
+* **Debounced Search** - Optimized API calls
+* **State Management** - Zustand for efficient state handling
+
+## Tech Stack
+
+| Category | Technology                     |
+| -------- | ------------------------------ |
 | Frontend | Next.js 14, React 18, TypeScript |
-| Styling | Tailwind CSS, Framer Motion |
-| State | Zustand, React Query |
-| APIs | AniList GraphQL, Comick REST |
-| Backend | Node.js, Express |
-| Caching | node-cache |
+| Styling  | Tailwind CSS, Framer Motion    |
+| State    | Zustand, React Query           |
+| APIs     | AniList GraphQL, Comick REST   |
+| Backend  | Node.js, Express               |
+| Caching  | node-cache                     |
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 anidex-reader/
@@ -90,52 +104,63 @@ anidex-reader/
 └── README.md
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- npm or yarn
+{% hint style="warning" %}
+Make sure you have Node.js 18 or higher installed on your system.
+{% endhint %}
+
+* Node.js 18+
+* npm or yarn
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/anidex-reader.git
-   cd anidex-reader
-   ```
+#### 1. Clone the repository
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+git clone https://github.com/yourusername/anidex-reader.git
+cd anidex-reader
+```
 
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   ```
+#### 2. Install dependencies
 
-4. **Start development servers**
-   ```bash
-   # Start both frontend and backend
-   npm run dev:all
-   
-   # Or start separately:
-   npm run dev     # Frontend on http://localhost:3000
-   npm run server  # Backend on http://localhost:3001
-   ```
+```bash
+npm install
+```
 
-5. **Open in browser**
-   ```
-   http://localhost:3000
-   ```
+#### 3. Set up environment variables
 
-## 📡 API Integration
+```bash
+cp .env.example .env
+```
+
+#### 4. Start development servers
+
+```bash
+# Start both frontend and backend
+npm run dev:all
+
+# Or start separately:
+npm run dev     # Frontend on http://localhost:3000
+npm run server  # Backend on http://localhost:3001
+```
+
+#### 5. Open in browser
+
+```
+http://localhost:3000
+```
+
+## API Integration
 
 ### AniList GraphQL API
 
 Used for manga metadata, search, and filtering.
 
+{% tabs %}
+{% tab title="Query Example" %}
 ```typescript
 // Example: Fetch trending manga
 const TRENDING_QUERY = gql`
@@ -156,13 +181,16 @@ const TRENDING_QUERY = gql`
   }
 `;
 ```
+{% endtab %}
+{% endtabs %}
 
 ### Comick REST API
 
 Used for chapters and reading images.
 
+{% tabs %}
+{% tab title="Get Chapters" %}
 ```typescript
-// Get chapters for a manga
 const chapters = await axios.get('https://api.comick.fun/comic/{hid}/chapters', {
   params: {
     lang: 'en',
@@ -170,72 +198,87 @@ const chapters = await axios.get('https://api.comick.fun/comic/{hid}/chapters', 
     limit: 100,
   },
 });
+```
+{% endtab %}
 
-// Get chapter images
+{% tab title="Get Images" %}
+```typescript
 const images = await axios.get(`https://api.comick.fun/chapter/${hid}`);
 const imageUrls = images.data.chapter.md_images.map(
   (img) => `https://meo.comick.pictures/${img.b2key}`
 );
 ```
+{% endtab %}
+{% endtabs %}
 
-## 🎮 Reader Keyboard Shortcuts
+## Reader Keyboard Shortcuts
 
-| Key | Action |
-|-----|--------|
-| `←` `→` / `A` `D` | Navigate pages (horizontal mode) |
-| `↑` `↓` / `W` `S` | Navigate pages (vertical mode) |
-| `Space` | Next page |
-| `F` | Toggle fullscreen |
-| `+` / `-` | Zoom in/out |
-| `0` | Reset zoom |
-| `Esc` | Exit fullscreen / Close settings |
+| Key                   | Action                           |
+| --------------------- | -------------------------------- |
+| `←` `→` / `A` `D`     | Navigate pages (horizontal mode) |
+| `↑` `↓` / `W` `S`     | Navigate pages (vertical mode)   |
+| `Space`               | Next page                        |
+| `F`                   | Toggle fullscreen                |
+| `+` / `-`             | Zoom in/out                      |
+| `0`                   | Reset zoom                       |
+| `Esc`                 | Exit fullscreen / Close settings |
 
-## 🌐 Deployment
+## Deployment
 
-### Vercel (Recommended - One-Click Deploy)
+### Vercel (Recommended)
+
+{% hint style="success" %}
+Vercel is the recommended deployment platform for Next.js applications with zero configuration required.
+{% endhint %}
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/anidex-reader)
 
 #### Manual Deployment
 
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin main
-   ```
+**Step 1: Push to GitHub**
 
-2. **Import to Vercel**
-   - Go to [vercel.com/new](https://vercel.com/new)
-   - Select your GitHub repository
-   - Vercel will auto-detect Next.js
+```bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+```
 
-3. **Configure Project**
-   - Framework Preset: Next.js (auto-detected)
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-   - Install Command: `npm install`
+**Step 2: Import to Vercel**
 
-4. **Set Environment Variables** (optional)
-   ```
-   NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
-   ```
+* Go to [vercel.com/new](https://vercel.com/new)
+* Select your GitHub repository
+* Vercel will auto-detect Next.js
 
-5. **Deploy**
-   - Click "Deploy"
-   - Your app will be live in ~2 minutes!
+**Step 3: Configure Project**
+
+| Setting           | Value                  |
+| ----------------- | ---------------------- |
+| Framework Preset  | Next.js (auto-detected) |
+| Build Command     | `npm run build`        |
+| Output Directory  | `.next`                |
+| Install Command   | `npm install`          |
+
+**Step 4: Set Environment Variables** (optional)
+
+```
+NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
+```
+
+**Step 5: Deploy**
+
+Click "Deploy" and your app will be live in \~2 minutes!
 
 #### Vercel Features Used
 
-- **Serverless Functions** - API routes for Comick proxying
-- **Edge Caching** - Automatic CDN caching for API responses  
-- **Standalone Output** - Optimized production build
-- **Zero Config** - Works out of the box with `vercel.json`
+* **Serverless Functions** - API routes for Comick proxying
+* **Edge Caching** - Automatic CDN caching for API responses
+* **Standalone Output** - Optimized production build
+* **Zero Config** - Works out of the box with `vercel.json`
 
 ### Alternative Platforms
 
-#### Cloudflare Pages
-
+{% tabs %}
+{% tab title="Cloudflare Pages" %}
 ```bash
 # Build command
 npm run build
@@ -246,9 +289,9 @@ npm run build
 # Node.js version
 18.x
 ```
+{% endtab %}
 
-#### Railway / Render
-
+{% tab title="Railway / Render" %}
 ```bash
 # Build command
 npm run build
@@ -259,9 +302,9 @@ npm start
 # Port
 3000
 ```
+{% endtab %}
 
-#### Docker
-
+{% tab title="Docker" %}
 ```dockerfile
 FROM node:18-alpine AS builder
 WORKDIR /app
@@ -279,6 +322,8 @@ COPY --from=builder /app/public ./public
 EXPOSE 3000
 CMD ["node", "server.js"]
 ```
+{% endtab %}
+{% endtabs %}
 
 ### Local Backend (Optional)
 
@@ -292,26 +337,30 @@ npm run server  # Runs on port 3001
 pm2 start server/index.js --name anidex-api
 ```
 
-## ⚖️ Legal & Credits
+## Legal & Credits
 
 ### Important Notices
 
-- **No Image Hosting** - All images are streamed directly from Comick CDN
-- **Metadata Only** - We only store/cache API responses, not copyrighted content
-- **DMCA Compliant** - See [/dmca](/dmca) page for takedown procedures
+{% hint style="danger" %}
+**Disclaimer:** This project is for educational purposes only. Please support official manga releases.
+{% endhint %}
+
+* **No Image Hosting** - All images are streamed directly from Comick CDN
+* **Metadata Only** - We only store/cache API responses, not copyrighted content
+* **DMCA Compliant** - See [/dmca](/dmca) page for takedown procedures
 
 ### Credits
 
-- [AniList](https://anilist.co) - Manga metadata and search
-- [Comick](https://comick.io) - Chapters and images
-- Scanlation groups - Translations and cleaning
-- Original creators - Manga authors and artists
+| Service                              | Purpose                   |
+| ------------------------------------ | ------------------------- |
+| [AniList](https://anilist.co)        | Manga metadata and search |
+| [Comick](https://comick.io)          | Chapters and images       |
+| Scanlation groups                    | Translations and cleaning |
+| Original creators                    | Manga authors and artists |
 
-### License
+## Contributing
 
-This project is for educational purposes. Please support official releases.
-
-## 🤝 Contributing
+We welcome contributions! Here's how you can help:
 
 1. Fork the repository
 2. Create feature branch (`git checkout -b feature/amazing-feature`)
@@ -319,7 +368,11 @@ This project is for educational purposes. Please support official releases.
 4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 Environment Variables
+{% hint style="info" %}
+Please read our contribution guidelines before submitting a PR.
+{% endhint %}
+
+## Environment Variables
 
 ```env
 # Frontend
@@ -337,21 +390,41 @@ DATABASE_URL=postgresql://...
 JWT_SECRET=your-secret-key
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-1. **Images not loading**
-   - Check if Comick CDN is accessible
-   - Verify CORS settings in `next.config.js`
+{% tabs %}
+{% tab title="Images not loading" %}
+**Problem:** Manga images fail to load or show broken image icons.
 
-2. **API rate limiting**
-   - Enable server-side caching
-   - Use the backend proxy
+**Solutions:**
 
-3. **Search not working**
-   - Ensure AniList API is reachable
-   - Check for GraphQL query errors
+* Check if Comick CDN is accessible
+* Verify CORS settings in `next.config.js`
+* Clear browser cache
+{% endtab %}
+
+{% tab title="API rate limiting" %}
+**Problem:** API requests are being throttled or blocked.
+
+**Solutions:**
+
+* Enable server-side caching
+* Use the backend proxy
+* Implement request debouncing
+{% endtab %}
+
+{% tab title="Search not working" %}
+**Problem:** Search returns no results or errors.
+
+**Solutions:**
+
+* Ensure AniList API is reachable
+* Check for GraphQL query errors in console
+* Verify network connectivity
+{% endtab %}
+{% endtabs %}
 
 ### Debug Mode
 
@@ -360,14 +433,12 @@ JWT_SECRET=your-secret-key
 DEBUG=* npm run dev
 ```
 
----
+***
 
-<p align="center">
-  Made with ❤️ for manga readers everywhere
-</p>
+<div align="center">
 
-<p align="center">
-  <a href="https://github.com/yourusername/anidex-reader/stargazers">⭐ Star this repo</a> •
-  <a href="https://github.com/yourusername/anidex-reader/issues">🐛 Report Bug</a> •
-  <a href="https://github.com/yourusername/anidex-reader/issues">✨ Request Feature</a>
-</p>
+**Made with ❤️ for manga readers everywhere**
+
+[⭐ Star this repo](https://github.com/yourusername/anidex-reader/stargazers) • [🐛 Report Bug](https://github.com/yourusername/anidex-reader/issues) • [✨ Request Feature](https://github.com/yourusername/anidex-reader/issues)
+
+</div>
