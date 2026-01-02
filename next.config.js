@@ -18,6 +18,15 @@ const nextConfig = {
         protocol: 'https',
         hostname: '*.comick.pictures',
       },
+      // MangaPlus image domains
+      {
+        protocol: 'https',
+        hostname: 'jumpg-assets.tokyo-cdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mangaplus.shueisha.co.jp',
+      },
     ],
     // Use unoptimized for external images from CDNs
     unoptimized: true,
