@@ -112,33 +112,36 @@ export function MangaCard({ manga, index = 0, variant = 'default' }: MangaCardPr
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.05 }}
+        whileHover={{ y: -8 }}
         className="group relative"
       >
         {/* Card Container */}
-        <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-dark-800">
+        <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-dark-800 shadow-lg group-hover:shadow-xl group-hover:shadow-primary-500/20 transition-all duration-300">
           {/* Cover Image */}
           <Image
             src={manga.coverImage.extraLarge || manga.coverImage.large}
             alt={title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
+            className="object-cover group-hover:scale-110 transition-transform duration-500"
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
           />
 
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-70 group-hover:opacity-90 transition-opacity" />
+
+          {/* Glow Effect on Hover */}
+          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-primary-500/20 to-transparent" />
 
           {/* Score Badge */}
           {manga.averageScore && (
             <div
               className={cn(
-                'absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium',
+                'absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-bold backdrop-blur-sm',
                 manga.averageScore >= 80
-                  ? 'bg-green-500/90'
+                  ? 'bg-emerald-500/90 text-white'
                   : manga.averageScore >= 60
-                  ? 'bg-yellow-500/90'
-                  : 'bg-red-500/90',
-                'text-white'
+                  ? 'bg-amber-500/90 text-white'
+                  : 'bg-rose-500/90 text-white'
               )}
             >
               <Star className="w-3 h-3 fill-current" />
@@ -150,11 +153,11 @@ export function MangaCard({ manga, index = 0, variant = 'default' }: MangaCardPr
           <div className="absolute top-2 left-2">
             <span
               className={cn(
-                'px-2 py-1 rounded-full text-xs font-medium',
+                'px-2.5 py-1 rounded-lg text-xs font-semibold backdrop-blur-sm',
                 manga.status === 'RELEASING'
-                  ? 'bg-primary-500/90 text-white'
+                  ? 'bg-gradient-to-r from-primary-500 to-pink-500 text-white'
                   : manga.status === 'FINISHED'
-                  ? 'bg-blue-500/90 text-white'
+                  ? 'bg-cyan-500/90 text-white'
                   : 'bg-dark-600/90 text-dark-200'
               )}
             >
@@ -163,18 +166,21 @@ export function MangaCard({ manga, index = 0, variant = 'default' }: MangaCardPr
           </div>
 
           {/* Content */}
-          <div className="absolute bottom-0 left-0 right-0 p-3">
-            <h3 className="text-white font-semibold line-clamp-2 text-sm group-hover:text-primary-400 transition-colors">
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <h3 className="text-white font-bold line-clamp-2 text-sm leading-tight group-hover:text-primary-300 transition-colors">
               {title}
             </h3>
-            <div className="flex items-center gap-2 mt-1.5 text-dark-300 text-xs">
+            <div className="flex items-center gap-1.5 mt-2 flex-wrap">
               {manga.genres.slice(0, 2).map((genre) => (
-                <span key={genre} className="bg-dark-700/80 px-2 py-0.5 rounded">
+                <span key={genre} className="bg-white/10 backdrop-blur-sm px-2 py-0.5 rounded-md text-xs text-white/80">
                   {genre}
                 </span>
               ))}
             </div>
           </div>
+
+          {/* Border Glow Effect */}
+          <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-primary-500/50 transition-colors duration-300" />
         </div>
       </motion.div>
     </Link>
