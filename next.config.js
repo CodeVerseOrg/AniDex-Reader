@@ -6,14 +6,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 's4.anilist.co',
       },
-      // MangaPlus image domains
+      // External image domains
       {
         protocol: 'https',
-        hostname: 'jumpg-assets.tokyo-cdn.com',
+        hostname: 'uploads.mangadex.org',
       },
       {
         protocol: 'https',
-        hostname: 'mangaplus.shueisha.co.jp',
+        hostname: 'cmdxd98sb0x3yprd.mangadex.network',
       },
     ],
     // Use unoptimized for external images from CDNs

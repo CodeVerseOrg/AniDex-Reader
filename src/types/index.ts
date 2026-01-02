@@ -106,10 +106,10 @@ export interface PaginationState {
   hasNextPage: boolean;
 }
 
-// Unified Manga Type (combines AniList + Comick data)
+// Unified Manga Type (combines AniList + Consumet data)
 export interface UnifiedManga {
   anilistId: number;
-  comickId?: string;
+  consumetId?: string;
   title: {
     romaji: string;
     english: string | null;
@@ -130,7 +130,7 @@ export interface UnifiedManga {
   isAdult: boolean;
 }
 // Multi-Source Types
-export type MangaSource = 'mangaplus' | 'mangasee' | 'mangadex';
+export type MangaSource = 'consumet';
 
 export interface SourceChapter {
   id: string;

@@ -94,7 +94,7 @@ export function useGenres() {
   });
 }
 
-// Multi-Source Hooks (MangaPlus)
+// Multi-Source Hooks
 export function useMultiSourceChapters(
   anilistId: number | null,
   title: string | null,

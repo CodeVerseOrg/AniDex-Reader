@@ -24,7 +24,7 @@ export default function DMCAPage() {
                 </h2>
                 <p className="text-dark-300">
                   AniDex Reader does not host, store, or distribute any copyrighted
-                  content. All manga images are sourced directly from MangaPlus (Shueisha),
+                  content. All manga images are sourced from third-party APIs,
                   and metadata is obtained from AniList's public API.
                 </p>
               </div>
@@ -40,8 +40,8 @@ export default function DMCAPage() {
             <div className="space-y-4 text-dark-300">
               <p>
                 <strong className="text-white">Images:</strong> All manga pages and
-                cover images are streamed directly from MangaPlus (Shueisha's official
-                platform). We do not host or cache any images on our servers.
+                cover images are streamed from third-party sources.
+                We do not host or cache any images on our servers.
               </p>
               <p>
                 <strong className="text-white">Metadata:</strong> Manga information
@@ -50,7 +50,7 @@ export default function DMCAPage() {
               </p>
               <p>
                 <strong className="text-white">Chapter Data:</strong> Chapter
-                listings and reading order are provided by MangaPlus's public API.
+                listings and reading order are provided by third-party APIs.
               </p>
             </div>
           </section>
@@ -67,17 +67,8 @@ export default function DMCAPage() {
               </p>
               <ol className="list-decimal list-inside space-y-2 pl-4">
                 <li>
-                  We do not host the content directly. For image removals, please
-                  contact{' '}
-                  <a
-                    href="https://mangaplus.shueisha.co.jp/help"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary-500 hover:underline"
-                  >
-                    MangaPlus/Shueisha directly
-                  </a>
-                  .
+                  We do not host the content directly. We aggregate content from
+                  third-party sources.
                 </li>
                 <li>
                   For metadata concerns, please contact{' '}

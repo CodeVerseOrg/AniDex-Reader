@@ -266,7 +266,7 @@ export default function MangaDetailsPage({ params }: MangaDetailsPageProps) {
                 Chapters not available
               </p>
               <p className="text-dark-500 text-sm">
-                This manga may not be available for reading on MangaPlus.
+                This manga may not be available for reading.
               </p>
             </div>
           ) : chapters.length === 0 ? (

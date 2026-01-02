@@ -11,7 +11,7 @@ description: A modern, feature-rich manga reading website built with Next.js, Re
 AniDex Reader is a modern manga reading platform that provides a seamless reading experience with features like multiple reading modes, theme customization, and smart chapter navigation.
 
 {% hint style="info" %}
-This project uses [AniList](https://anilist.co) for manga metadata and [MangaPlus](https://mangaplus.shueisha.co.jp) (Shueisha) for chapter content.
+This project uses [AniList](https://anilist.co) for manga metadata and the Consumet API for chapter content.
 {% endhint %}
 
 ## Features
@@ -57,7 +57,7 @@ This project uses [AniList](https://anilist.co) for manga metadata and [MangaPlu
 | Frontend | Next.js 14, React 18, TypeScript |
 | Styling  | Tailwind CSS, Framer Motion    |
 | State    | Zustand, React Query           |
-| APIs     | AniList GraphQL, MangaPlus REST |
+| APIs     | AniList GraphQL, Consumet REST |
 | Backend  | Node.js, Express               |
 | Caching  | node-cache                     |
 
@@ -84,7 +84,7 @@ anidex-reader/
 │   │   └── ui/                # Skeleton, SearchInput, Filters
 │   ├── lib/
 │   │   ├── anilist.ts         # AniList GraphQL API client
-│   │   ├── mangaplus.ts       # MangaPlus REST API client
+│   │   ├── consumet.ts        # Consumet REST API client
 │   │   ├── sources.ts         # Chapter source handling
 │   │   └── utils.ts           # Utility functions
 │   ├── hooks/
@@ -184,19 +184,30 @@ const TRENDING_QUERY = gql`
 {% endtab %}
 {% endtabs %}
 
-### MangaPlus REST API
+### Consumet REST API
 
-Used for official Shueisha manga chapters and images.
+Used for manga chapters and images.
 
 {% tabs %}
-{% tab title="Get Manga Details" %}
+{% tab title="Search Manga" %}
 ```typescript
-// Get manga title details with chapters
+// Search manga
 const response = await fetch(
-  'https://jumpg-webapi.tokyo-cdn.com/api/title_detailV3?title_id=100037&format=json'
+  'https://apiconsumetorg-tan.vercel.app/meta/anilist-manga/one%20piece'
 );
 const data = await response.json();
-const chapters = data.success.titleDetailView.chapterListGroup;
+const results = data.results;
+```
+{% endtab %}
+
+{% tab title="Get Manga Info" %}
+```typescript
+// Get manga info with chapters
+const response = await fetch(
+  'https://apiconsumetorg-tan.vercel.app/meta/anilist-manga/info/21'
+);
+const data = await response.json();
+const chapters = data.chapters;
 ```
 {% endtab %}
 
@@ -204,32 +215,13 @@ const chapters = data.success.titleDetailView.chapterListGroup;
 ```typescript
 // Get chapter images
 const response = await fetch(
-  `https://jumpg-webapi.tokyo-cdn.com/api/manga_viewer?chapter_id=${chapterId}&split=yes&img_quality=high&format=json`
+  `https://apiconsumetorg-tan.vercel.app/meta/anilist-manga/read?chapterId=${chapterId}`
 );
-const data = await response.json();
-const pages = data.success.mangaViewer.pages
-  .filter(p => p.mangaPage)
-  .map(p => p.mangaPage.imageUrl);
+const pages = await response.json();
+const images = pages.map(p => p.img);
 ```
 {% endtab %}
 {% endtabs %}
-
-### Available MangaPlus Titles
-
-MangaPlus offers official translations of popular Shueisha manga:
-
-| Title | MangaPlus ID |
-| ----- | ------------ |
-| One Piece | 100020 |
-| My Hero Academia | 100017 |
-| Jujutsu Kaisen | 100034 |
-| Chainsaw Man | 100037 |
-| Spy × Family | 100056 |
-| Dandadan | 100147 |
-| Black Clover | 100003 |
-| Boruto | 100006 |
-| Dragon Ball Super | 100011 |
-| One Punch Man | 100021 |
 
 ## Reader Keyboard Shortcuts
 
@@ -290,7 +282,7 @@ Click "Deploy" and your app will be live in ~2 minutes!
 
 #### Vercel Features Used
 
-* **Serverless Functions** - API routes for MangaPlus proxying
+* **Serverless Functions** - API routes for proxying
 * **Edge Caching** - Automatic CDN caching for API responses
 * **Standalone Output** - Optimized production build
 * **Zero Config** - Works out of the box with `vercel.json`
@@ -365,7 +357,7 @@ pm2 start server/index.js --name anidex-api
 **Disclaimer:** This project is for educational purposes only. Please support official manga releases.
 {% endhint %}
 
-* **No Image Hosting** - All images are streamed directly from MangaPlus CDN
+* **No Image Hosting** - All images are streamed from third-party sources
 * **Metadata Only** - We only store/cache API responses, not copyrighted content
 * **DMCA Compliant** - See [/dmca](/dmca) page for takedown procedures
 
@@ -374,8 +366,7 @@ pm2 start server/index.js --name anidex-api
 | Service                                          | Purpose                   |
 | ------------------------------------------------ | ------------------------- |
 | [AniList](https://anilist.co)                    | Manga metadata and search |
-| [MangaPlus](https://mangaplus.shueisha.co.jp)    | Official chapters and images |
-| Shueisha                                         | Publisher and content owner |
+| [Consumet API](https://github.com/consumet/api.consumet.org) | Chapter content |
 | Original creators                                | Manga authors and artists |
 
 ## Contributing
@@ -419,7 +410,7 @@ JWT_SECRET=your-secret-key
 **Problem:** Manga images fail to load or show broken image icons.
 
 **Solutions:**
-1. Check if MangaPlus CDN is accessible in your region
+1. Check if the image CDN is accessible in your region
 2. Ensure `next.config.js` has correct image domains configured
 3. Clear browser cache and try again
 4. Check browser console for CORS errors
@@ -429,10 +420,10 @@ JWT_SECRET=your-secret-key
 **Problem:** No chapters appear for a manga title.
 
 **Solutions:**
-1. The manga may not be available on MangaPlus
-2. MangaPlus only provides certain chapters (first/latest)
-3. Check if the title is in the supported titles list
-4. Try searching for the exact Japanese title
+1. The manga may not be available in the Consumet API
+2. Try searching for the exact title
+3. Check if the AniList ID is correct
+4. Try a different manga to test if the API is working
 {% endtab %}
 
 {% tab title="Build errors" %}

@@ -1,6 +1,5 @@
 // Consumet API Client
 // API: https://apiconsumetorg-tan.vercel.app
-// Uses MangaDex as backend for manga reading
 
 const CONSUMET_API_URL = 'https://apiconsumetorg-tan.vercel.app';
 const ANILIST_MANGA_API = `${CONSUMET_API_URL}/meta/anilist-manga`;
@@ -105,7 +104,7 @@ export interface ConsumetChapterPage {
   page: number;
 }
 
-// Search manga using Consumet API (backed by AniList + MangaDex)
+// Search manga using Consumet API
 export async function searchMangaConsumet(query: string, page: number = 1): Promise<ConsumetSearchResponse> {
   try {
     const response = await fetch(`${ANILIST_MANGA_API}/${encodeURIComponent(query)}?page=${page}`, {
@@ -175,7 +174,7 @@ export async function getChapterPagesConsumet(chapterId: string): Promise<Consum
 // Convert Consumet chapter to SourceChapter format
 export function convertConsumetChapter(chapter: ConsumetChapter): {
   id: string;
-  source: 'mangadex';
+  source: 'consumet';
   chapter: string | null;
   volume: string | null;
   title: string | null;
@@ -187,7 +186,7 @@ export function convertConsumetChapter(chapter: ConsumetChapter): {
 } {
   return {
     id: chapter.id,
-    source: 'mangadex',
+    source: 'consumet',
     chapter: chapter.chapterNumber,
     volume: chapter.volumeNumber,
     title: chapter.title,
@@ -239,7 +238,7 @@ export function convertConsumetToAniList(info: ConsumetMangaInfo) {
 // Get chapters using Consumet API (for integration with existing sources.ts)
 export async function getConsumetChapters(anilistId: number): Promise<{
   id: string;
-  source: 'mangadex';
+  source: 'consumet';
   chapter: string | null;
   volume: string | null;
   title: string | null;

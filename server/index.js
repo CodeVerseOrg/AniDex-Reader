@@ -46,10 +46,10 @@ app.post('/api/cache/clear', (req, res) => {
   res.json({ message: 'Cache cleared' });
 });
 
-// Proxy for Comick API with caching
-app.get('/api/comick/*', async (req, res) => {
+// Proxy for Consumet API with caching
+app.get('/api/consumet/*', async (req, res) => {
   const path = req.params[0];
-  const cacheKey = `comick:${path}:${JSON.stringify(req.query)}`;
+  const cacheKey = `consumet:${path}:${JSON.stringify(req.query)}`;
   
   // Check cache first
   const cached = cache.get(cacheKey);
@@ -59,7 +59,7 @@ app.get('/api/comick/*', async (req, res) => {
   }
 
   try {
-    const response = await axios.get(`https://api.comick.fun/${path}`, {
+    const response = await axios.get(`https://apiconsumetorg-tan.vercel.app/${path}`, {
       params: req.query,
       headers: {
         'User-Agent': 'AniDex-Reader/1.0',
@@ -67,15 +67,15 @@ app.get('/api/comick/*', async (req, res) => {
     });
 
     // Cache the response
-    const ttl = path.includes('chapter') ? 1800 : 300; // 30 min for chapters, 5 min for others
+    const ttl = path.includes('read') ? 1800 : 300; // 30 min for chapter pages, 5 min for others
     cache.set(cacheKey, response.data, ttl);
     
     res.set('X-Cache', 'MISS');
     res.json(response.data);
   } catch (error) {
-    console.error('Comick proxy error:', error.message);
+    console.error('Consumet proxy error:', error.message);
     res.status(error.response?.status || 500).json({
-      error: 'Failed to fetch from Comick',
+      error: 'Failed to fetch from Consumet',
       message: error.message,
     });
   }
@@ -114,7 +114,7 @@ app.post('/api/anilist', async (req, res) => {
   }
 });
 
-// Search endpoint with combined AniList + Comick data
+// Search endpoint with AniList data
 app.get('/api/search', async (req, res) => {
   const { q: query, page = 1, perPage = 20 } = req.query;
   const cacheKey = `search:${query}:${page}:${perPage}`;
@@ -166,7 +166,7 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// Get manga details with MangaDex chapter count
+// Get manga details with Consumet chapter info
 app.get('/api/manga/:id', async (req, res) => {
   const { id } = req.params;
   const cacheKey = `manga:${id}`;
@@ -205,38 +205,21 @@ app.get('/api/manga/:id', async (req, res) => {
 
     const manga = anilistResponse.data.data.Media;
     
-    // Try to find on MangaDex
-    let mangaDexId = null;
+    // Try to get chapter info from Consumet
     let chapterCount = 0;
     
     try {
-      const mdResponse = await axios.get('https://api.mangadex.org/manga', {
-        params: {
-          title: manga.title.romaji || manga.title.english,
-          limit: 1,
-        },
-      });
-      
-      if (mdResponse.data.data.length > 0) {
-        mangaDexId = mdResponse.data.data[0].id;
-        
-        // Get chapter count
-        const chaptersResponse = await axios.get('https://api.mangadex.org/chapter', {
-          params: {
-            manga: mangaDexId,
-            limit: 0,
-          },
-        });
-        chapterCount = chaptersResponse.data.total || 0;
+      const consumetResponse = await axios.get(`https://apiconsumetorg-tan.vercel.app/meta/anilist-manga/info/${id}`);
+      if (consumetResponse.data && consumetResponse.data.chapters) {
+        chapterCount = consumetResponse.data.chapters.length || 0;
       }
-    } catch (mdError) {
-      console.error('MangaDex lookup error:', mdError.message);
+    } catch (consumetError) {
+      console.error('Consumet lookup error:', consumetError.message);
     }
 
     const result = {
       ...manga,
-      mangaDexId,
-      mangaDexChapterCount: chapterCount,
+      consumetChapterCount: chapterCount,
     };
 
     cache.set(cacheKey, result, 600); // Cache for 10 minutes
