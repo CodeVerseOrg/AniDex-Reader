@@ -32,6 +32,28 @@ interface ChapterNav {
   attributes: { chapter: string | null };
 }
 
+// Filter out placeholder/redirect images
+function filterPlaceholderImages(urls: string[]): string[] {
+  const blockedPatterns = [
+    'mangadex',
+    'read-it-on',
+    'read_it_on',
+    'please-support',
+    'please_support',
+    'official-release',
+    'licensed',
+    'unavailable',
+    'placeholder',
+    'support-the-author',
+    'support_the_author',
+  ];
+  
+  return urls.filter(url => {
+    const lowerUrl = url.toLowerCase();
+    return !blockedPatterns.some(pattern => lowerUrl.includes(pattern));
+  });
+}
+
 interface MangaReaderProps {
   mangaId: string;
   mangaTitle: string;
@@ -51,7 +73,7 @@ export function MangaReader({
   coverUrl,
   chapterId,
   chapterNumber,
-  imageUrls,
+  imageUrls: rawImageUrls,
   prevChapter,
   nextChapter,
   source = 'consumet',
@@ -59,6 +81,9 @@ export function MangaReader({
 }: MangaReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const readerRef = useRef<HTMLDivElement>(null);
+  
+  // Filter out placeholder images (MangaDex redirect pages, etc.)
+  const imageUrls = filterPlaceholderImages(rawImageUrls);
   
   // Build chapter URLs with source info
   const buildChapterUrl = (chapter: ChapterNav | null) => {

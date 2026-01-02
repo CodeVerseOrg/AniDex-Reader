@@ -260,5 +260,29 @@ export async function getConsumetChapters(anilistId: number): Promise<{
 // Get chapter images using Consumet API (for integration with existing sources.ts)
 export async function getConsumetChapterImages(chapterId: string): Promise<string[]> {
   const pages = await getChapterPagesConsumet(chapterId);
-  return pages.map(page => page.img);
+  
+  // Filter out MangaDex placeholder/redirect images
+  const filteredPages = pages.filter(page => {
+    const imgUrl = page.img.toLowerCase();
+    
+    // Filter out MangaDex placeholder images and redirect pages
+    const blockedPatterns = [
+      'mangadex',
+      'read it on',
+      'please support',
+      'official release',
+      'licensed',
+      'unavailable',
+      'placeholder',
+      'cmdxd',  // MangaDex CDN pattern
+      'uploads.mangadex.org',
+    ];
+    
+    // Check if URL contains any blocked patterns
+    const isBlocked = blockedPatterns.some(pattern => imgUrl.includes(pattern));
+    
+    return !isBlocked;
+  });
+  
+  return filteredPages.map(page => page.img);
 }
