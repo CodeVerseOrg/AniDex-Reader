@@ -5,7 +5,7 @@ const isServer = typeof window === 'undefined';
 
 // Use direct API on server, proxy on client
 const MANGADEX_API = isServer ? 'https://api.mangadex.org' : '/api/mangadex';
-const MANGADEX_API_KEY = process.env.MANGADEX_API_KEY || '';
+const MANGADEX_API_KEY = process.env.MANGADEX_API_KEY || 'IfJ99BGvK1TkFyNsZFXWIvh9YwBvzV8e';
 
 // Axios instance with default config
 const mangadexClient = axios.create({

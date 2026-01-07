@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 const MANGADEX_API = 'https://api.mangadex.org';
-const MANGADEX_API_KEY = process.env.MANGADEX_API_KEY || '';
+const MANGADEX_API_KEY = process.env.MANGADEX_API_KEY || 'IfJ99BGvK1TkFyNsZFXWIvh9YwBvzV8e';
 
 export async function GET(
   request: NextRequest,
