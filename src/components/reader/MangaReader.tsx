@@ -35,7 +35,6 @@ interface ChapterNav {
 // Filter out placeholder/redirect images
 function filterPlaceholderImages(urls: string[]): string[] {
   const blockedPatterns = [
-    'mangadex',
     'read-it-on',
     'read_it_on',
     'please-support',
