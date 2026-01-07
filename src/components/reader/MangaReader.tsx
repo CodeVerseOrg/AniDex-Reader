@@ -76,7 +76,7 @@ export function MangaReader({
   imageUrls: rawImageUrls,
   prevChapter,
   nextChapter,
-  source = 'consumet',
+  source = 'mangadex',
   sourceId,
 }: MangaReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);

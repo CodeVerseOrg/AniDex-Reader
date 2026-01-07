@@ -130,7 +130,7 @@ export interface UnifiedManga {
   isAdult: boolean;
 }
 // Multi-Source Types
-export type MangaSource = 'consumet';
+export type MangaSource = 'mangadex' | 'consumet' | 'mangaplus' | 'mangasee';
 
 export interface SourceChapter {
   id: string;

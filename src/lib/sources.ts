@@ -4,12 +4,19 @@ import type {
   SourceChapterImages,
 } from '@/types';
 import {
+  findMangaDexManga,
+  getMangaDexChapters,
+  getMangaDexChapterImages,
+  convertMangaDexChapter,
+  getMangaDexLanguages,
+} from './mangadex';
+import {
   getConsumetChapters,
   getConsumetChapterImages,
 } from './consumet';
 
-// Consumet API is the only source
-const SOURCE_PRIORITY: MangaSource[] = ['consumet'];
+// MangaDex as primary, Consumet as fallback
+const SOURCE_PRIORITY: MangaSource[] = ['mangadex', 'consumet'];
 
 export interface MultiSourceResult {
   source: MangaSource;
@@ -18,11 +25,22 @@ export interface MultiSourceResult {
   languages: string[];
 }
 
-// Find manga on Consumet API
+// Find manga on MangaDex or Consumet API
 export async function findMangaAcrossSources(
   anilistId: number,
   title: string
 ): Promise<{ source: MangaSource; sourceId: string } | null> {
+  // Try MangaDex first
+  try {
+    const mangadexId = await findMangaDexManga(anilistId, title);
+    if (mangadexId) {
+      return { source: 'mangadex', sourceId: mangadexId };
+    }
+  } catch (error) {
+    console.error('MangaDex API error:', error);
+  }
+  
+  // Fallback to Consumet
   try {
     const consumetChapters = await getConsumetChapters(anilistId);
     if (consumetChapters.length > 0) {
@@ -35,7 +53,7 @@ export async function findMangaAcrossSources(
   return null;
 }
 
-// Get chapters from Consumet API
+// Get chapters from source
 export async function getChaptersFromSource(
   source: MangaSource,
   sourceId: string,
@@ -43,6 +61,11 @@ export async function getChaptersFromSource(
   offset: number = 0,
   limit: number = 100
 ): Promise<SourceChapter[]> {
+  if (source === 'mangadex') {
+    const { chapters } = await getMangaDexChapters(sourceId, language, limit, offset);
+    return chapters.map((ch) => convertMangaDexChapter(ch, sourceId));
+  }
+  
   if (source === 'consumet') {
     const chapters = await getConsumetChapters(parseInt(sourceId));
     return chapters as SourceChapter[];
@@ -51,11 +74,16 @@ export async function getChaptersFromSource(
   return [];
 }
 
-// Get chapter images from Consumet API
+// Get chapter images from source
 export async function getChapterImagesFromSource(
   source: MangaSource,
   chapterId: string
 ): Promise<SourceChapterImages> {
+  if (source === 'mangadex') {
+    const images = await getMangaDexChapterImages(chapterId);
+    return { source: 'mangadex', images };
+  }
+  
   if (source === 'consumet') {
     const images = await getConsumetChapterImages(chapterId);
     return { source: 'consumet', images };
@@ -64,12 +92,35 @@ export async function getChapterImagesFromSource(
   return { source, images: [] };
 }
 
-// Get chapters from Consumet API
+// Get chapters with multi-source fallback
 export async function getChaptersMultiSource(
   anilistId: number,
   title: string,
   language: string = 'en'
 ): Promise<MultiSourceResult | null> {
+  // Try MangaDex first
+  try {
+    const mangadexId = await findMangaDexManga(anilistId, title);
+    
+    if (mangadexId) {
+      const chapters = await getChaptersFromSource('mangadex', mangadexId, language);
+      
+      if (chapters.length > 0) {
+        const languages = await getMangaDexLanguages(mangadexId);
+        
+        return {
+          source: 'mangadex',
+          sourceId: mangadexId,
+          chapters,
+          languages: languages.length > 0 ? languages : ['en'],
+        };
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching from MangaDex:', error);
+  }
+  
+  // Fallback to Consumet
   try {
     const consumetChapters = await getConsumetChapters(anilistId);
     
@@ -88,7 +139,7 @@ export async function getChaptersMultiSource(
   return null;
 }
 
-// Get merged chapters from Consumet API
+// Get merged chapters from all sources
 export async function getMergedChapters(
   anilistId: number,
   title: string,
@@ -99,12 +150,38 @@ export async function getMergedChapters(
 }> {
   const chapters: SourceChapter[] = [];
   const sources: { source: MangaSource; sourceId: string }[] = [];
+  const seenChapters = new Set<string>();
   
+  // Try MangaDex
+  try {
+    const mangadexId = await findMangaDexManga(anilistId, title);
+    if (mangadexId) {
+      sources.push({ source: 'mangadex', sourceId: mangadexId });
+      const mdChapters = await getChaptersFromSource('mangadex', mangadexId, language);
+      for (const chapter of mdChapters) {
+        const key = `${chapter.chapter}-${chapter.volume}`;
+        if (!seenChapters.has(key)) {
+          seenChapters.add(key);
+          chapters.push(chapter);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('MangaDex fetch error:', error);
+  }
+  
+  // Add Consumet chapters
   try {
     const consumetChapters = await getConsumetChapters(anilistId);
     if (consumetChapters.length > 0) {
       sources.push({ source: 'consumet', sourceId: anilistId.toString() });
-      chapters.push(...(consumetChapters as SourceChapter[]));
+      for (const chapter of consumetChapters as SourceChapter[]) {
+        const key = `${chapter.chapter}-${chapter.volume}`;
+        if (!seenChapters.has(key)) {
+          seenChapters.add(key);
+          chapters.push(chapter);
+        }
+      }
     }
   } catch (error) {
     console.error('Consumet API fetch error:', error);
@@ -122,5 +199,8 @@ export async function getMergedChapters(
 
 // Source display names and info
 export const SOURCE_INFO: Record<MangaSource, { name: string; icon: string; color: string }> = {
-  consumet: { name: 'Consumet', icon: '📚', color: '#ff6740' },
+  mangadex: { name: 'MangaDex', icon: '📖', color: '#ff6740' },
+  consumet: { name: 'Consumet', icon: '📚', color: '#2196f3' },
+  mangaplus: { name: 'MangaPlus', icon: '📕', color: '#e91e63' },
+  mangasee: { name: 'MangaSee', icon: '📗', color: '#4caf50' },
 };
