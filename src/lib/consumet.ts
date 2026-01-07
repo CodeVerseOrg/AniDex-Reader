@@ -140,6 +140,9 @@ export async function getMangaInfoConsumet(id: string | number): Promise<Consume
     });
 
     if (!response.ok) {
+      if (response.status === 404) {
+        return null;
+      }
       throw new Error(`Consumet API error: ${response.status}`);
     }
 

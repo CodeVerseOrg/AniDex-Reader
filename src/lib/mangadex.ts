@@ -218,15 +218,6 @@ export async function findMangaDexManga(
   title: string
 ): Promise<string | null> {
   try {
-    // First try searching by AniList ID in links
-    const byIdResponse = await mangadexClient.get('/manga', {
-      params: {
-        ids: [],
-        limit: 5,
-        includes: ['cover_art'],
-      },
-    });
-
     // Search by title as fallback
     const results = await searchMangaDex(title, 5);
     
