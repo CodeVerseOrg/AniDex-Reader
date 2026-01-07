@@ -109,7 +109,6 @@ export interface PaginationState {
 // Unified Manga Type (combines AniList + Consumet data)
 export interface UnifiedManga {
   anilistId: number;
-  consumetId?: string;
   title: {
     romaji: string;
     english: string | null;
@@ -130,7 +129,7 @@ export interface UnifiedManga {
   isAdult: boolean;
 }
 // Multi-Source Types
-export type MangaSource = 'mangadex' | 'consumet' | 'mangaplus' | 'mangasee';
+export type MangaSource = 'mangadex' | 'mangaplus' | 'mangasee';
 
 export interface SourceChapter {
   id: string;

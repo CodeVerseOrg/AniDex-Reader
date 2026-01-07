@@ -10,13 +10,9 @@ import {
   convertMangaDexChapter,
   getMangaDexLanguages,
 } from './mangadex';
-import {
-  getConsumetChapters,
-  getConsumetChapterImages,
-} from './consumet';
 
-// MangaDex as primary, Consumet as fallback
-const SOURCE_PRIORITY: MangaSource[] = ['mangadex', 'consumet'];
+// MangaDex as primary
+const SOURCE_PRIORITY: MangaSource[] = ['mangadex'];
 
 export interface MultiSourceResult {
   source: MangaSource;
@@ -25,12 +21,12 @@ export interface MultiSourceResult {
   languages: string[];
 }
 
-// Find manga on MangaDex or Consumet API
+// Find manga on MangaDex
 export async function findMangaAcrossSources(
   anilistId: number,
   title: string
 ): Promise<{ source: MangaSource; sourceId: string } | null> {
-  // Try MangaDex first
+  // Try MangaDex
   try {
     const mangadexId = await findMangaDexManga(anilistId, title);
     if (mangadexId) {
@@ -38,16 +34,6 @@ export async function findMangaAcrossSources(
     }
   } catch (error) {
     console.error('MangaDex API error:', error);
-  }
-  
-  // Fallback to Consumet
-  try {
-    const consumetChapters = await getConsumetChapters(anilistId);
-    if (consumetChapters.length > 0) {
-      return { source: 'consumet', sourceId: anilistId.toString() };
-    }
-  } catch (error) {
-    console.error('Consumet API error:', error);
   }
   
   return null;
@@ -66,11 +52,6 @@ export async function getChaptersFromSource(
     return chapters.map((ch) => convertMangaDexChapter(ch, sourceId));
   }
   
-  if (source === 'consumet') {
-    const chapters = await getConsumetChapters(parseInt(sourceId));
-    return chapters as SourceChapter[];
-  }
-  
   return [];
 }
 
@@ -84,21 +65,16 @@ export async function getChapterImagesFromSource(
     return { source: 'mangadex', images };
   }
   
-  if (source === 'consumet') {
-    const images = await getConsumetChapterImages(chapterId);
-    return { source: 'consumet', images };
-  }
-  
   return { source, images: [] };
 }
 
-// Get chapters with multi-source fallback
+// Get chapters with multi-source fallback (Only MangaDex now)
 export async function getChaptersMultiSource(
   anilistId: number,
   title: string,
   language: string = 'en'
 ): Promise<MultiSourceResult | null> {
-  // Try MangaDex first
+  // Try MangaDex
   try {
     const mangadexId = await findMangaDexManga(anilistId, title);
     
@@ -118,22 +94,6 @@ export async function getChaptersMultiSource(
     }
   } catch (error) {
     console.error('Error fetching from MangaDex:', error);
-  }
-  
-  // Fallback to Consumet
-  try {
-    const consumetChapters = await getConsumetChapters(anilistId);
-    
-    if (consumetChapters.length > 0) {
-      return {
-        source: 'consumet',
-        sourceId: anilistId.toString(),
-        chapters: consumetChapters as SourceChapter[],
-        languages: ['en'],
-      };
-    }
-  } catch (error) {
-    console.error('Error fetching from Consumet:', error);
   }
   
   return null;
@@ -170,23 +130,6 @@ export async function getMergedChapters(
     console.error('MangaDex fetch error:', error);
   }
   
-  // Add Consumet chapters
-  try {
-    const consumetChapters = await getConsumetChapters(anilistId);
-    if (consumetChapters.length > 0) {
-      sources.push({ source: 'consumet', sourceId: anilistId.toString() });
-      for (const chapter of consumetChapters as SourceChapter[]) {
-        const key = `${chapter.chapter}-${chapter.volume}`;
-        if (!seenChapters.has(key)) {
-          seenChapters.add(key);
-          chapters.push(chapter);
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Consumet API fetch error:', error);
-  }
-  
   // Sort chapters by chapter number
   chapters.sort((a, b) => {
     const aNum = parseFloat(a.chapter || '0');
@@ -200,7 +143,7 @@ export async function getMergedChapters(
 // Source display names and info
 export const SOURCE_INFO: Record<MangaSource, { name: string; icon: string; color: string }> = {
   mangadex: { name: 'MangaDex', icon: '📖', color: '#ff6740' },
-  consumet: { name: 'Consumet', icon: '📚', color: '#2196f3' },
+  // Keeping others just in case the type requires it temporarily, but logically removed from use
   mangaplus: { name: 'MangaPlus', icon: '📕', color: '#e91e63' },
   mangasee: { name: 'MangaSee', icon: '📗', color: '#4caf50' },
-};
+} as any;

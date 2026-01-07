@@ -11,7 +11,7 @@ description: A modern, feature-rich manga reading website built with Next.js, Re
 AniDex Reader is a modern manga reading platform that provides a seamless reading experience with features like multiple reading modes, theme customization, and smart chapter navigation.
 
 {% hint style="info" %}
-This project uses [AniList](https://anilist.co) for manga metadata and the Consumet API for chapter content.
+This project uses [AniList](https://anilist.co) for manga metadata and the MangaDex API for chapter content.
 {% endhint %}
 
 ## Features
@@ -57,7 +57,7 @@ This project uses [AniList](https://anilist.co) for manga metadata and the Consu
 | Frontend | Next.js 14, React 18, TypeScript |
 | Styling  | Tailwind CSS, Framer Motion    |
 | State    | Zustand, React Query           |
-| APIs     | AniList GraphQL, Consumet REST |
+| APIs     | AniList GraphQL, MangaDex API |
 | Backend  | Node.js, Express               |
 | Caching  | node-cache                     |
 
@@ -84,7 +84,7 @@ anidex-reader/
 │   │   └── ui/                # Skeleton, SearchInput, Filters
 │   ├── lib/
 │   │   ├── anilist.ts         # AniList GraphQL API client
-│   │   ├── consumet.ts        # Consumet REST API client
+│   │   ├── mangadex.ts        # MangaDex API client
 │   │   ├── sources.ts         # Chapter source handling
 │   │   └── utils.ts           # Utility functions
 │   ├── hooks/
@@ -184,7 +184,7 @@ const TRENDING_QUERY = gql`
 {% endtab %}
 {% endtabs %}
 
-### Consumet REST API
+### MangaDex API
 
 Used for manga chapters and images.
 
@@ -193,32 +193,8 @@ Used for manga chapters and images.
 ```typescript
 // Search manga
 const response = await fetch(
-  'https://apiconsumetorg-tan.vercel.app/meta/anilist-manga/one%20piece'
+  'https://api.mangadex.org/manga?title=one%20piece'
 );
-const data = await response.json();
-const results = data.results;
-```
-{% endtab %}
-
-{% tab title="Get Manga Info" %}
-```typescript
-// Get manga info with chapters
-const response = await fetch(
-  'https://apiconsumetorg-tan.vercel.app/meta/anilist-manga/info/21'
-);
-const data = await response.json();
-const chapters = data.chapters;
-```
-{% endtab %}
-
-{% tab title="Get Chapter Images" %}
-```typescript
-// Get chapter images
-const response = await fetch(
-  `https://apiconsumetorg-tan.vercel.app/meta/anilist-manga/read?chapterId=${chapterId}`
-);
-const pages = await response.json();
-const images = pages.map(p => p.img);
 ```
 {% endtab %}
 {% endtabs %}
@@ -366,7 +342,7 @@ pm2 start server/index.js --name anidex-api
 | Service                                          | Purpose                   |
 | ------------------------------------------------ | ------------------------- |
 | [AniList](https://anilist.co)                    | Manga metadata and search |
-| [Consumet API](https://github.com/consumet/api.consumet.org) | Chapter content |
+| [MangaDex API](https://api.mangadex.org) | Chapter content |
 | Original creators                                | Manga authors and artists |
 
 ## Contributing
