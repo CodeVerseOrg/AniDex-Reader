@@ -196,20 +196,32 @@ export async function getMangaDexChapterImages(
   try {
     // Get at-home server info
     const response = await mangadexClient.get(`/at-home/server/${chapterId}`);
-    const data: MangaDexAtHomeResponse = response.data;
-
-    if (data.result !== 'ok') {
+    
+    // Log response for debugging (remove in production)
+    if (!response.data || response.data.result !== 'ok') {
+      console.error('MangaDex @Home error:', response.data);
       return [];
     }
 
+    const data: MangaDexAtHomeResponse = response.data;
     const { baseUrl, chapter } = data;
+    
+    if (!chapter || !chapter.data) {
+       console.error('MangaDex @Home: Missing chapter data', data);
+       return [];
+    }
+
     const quality = dataSaver ? 'data-saver' : 'data';
     const files = dataSaver ? chapter.dataSaver : chapter.data;
 
     // Construct image URLs
     return files.map((filename) => `${baseUrl}/${quality}/${chapter.hash}/${filename}`);
   } catch (error) {
-    console.error('MangaDex chapter images error:', error);
+    if (axios.isAxiosError(error)) {
+       console.error('MangaDex chapter images error:', error.message, error.response?.data);
+    } else {
+       console.error('MangaDex chapter images error:', error);
+    }
     return [];
   }
 }

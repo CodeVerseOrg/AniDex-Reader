@@ -13,7 +13,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'cmdxd98sb0x3yprd.mangadex.network',
+        hostname: '*.mangadex.network',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mangadex.org',
       },
     ],
     // Use unoptimized for external images from CDNs
