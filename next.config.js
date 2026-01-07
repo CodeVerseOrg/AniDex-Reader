@@ -19,6 +19,11 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'mangadex.org',
       },
+      // Webtoon
+      {
+        protocol: 'https',
+        hostname: 'webtoon-phinf.pstatic.net',
+      },
     ],
     // Use unoptimized for external images from CDNs
     unoptimized: true,

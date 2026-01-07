@@ -10,9 +10,14 @@ import {
   convertMangaDexChapter,
   getMangaDexLanguages,
 } from './mangadex';
+import {
+  searchWebtoon,
+  getWebtoonChapters,
+  getWebtoonImages,
+} from './webtoon';
 
-// MangaDex as primary
-const SOURCE_PRIORITY: MangaSource[] = ['mangadex'];
+// Source priority
+const SOURCE_PRIORITY: MangaSource[] = ['mangadex', 'webtoon'];
 
 export interface MultiSourceResult {
   source: MangaSource;
@@ -35,6 +40,17 @@ export async function findMangaAcrossSources(
   } catch (error) {
     console.error('MangaDex API error:', error);
   }
+
+  // Try Webtoon
+  try {
+    const results = await searchWebtoon(title);
+    if (results.length > 0) {
+       // Return first match
+       return { source: 'webtoon', sourceId: results[0].id };
+    }
+  } catch (error) {
+    console.error('Webtoon search error:', error);
+  }
   
   return null;
 }
@@ -51,6 +67,10 @@ export async function getChaptersFromSource(
     const { chapters } = await getMangaDexChapters(sourceId, language, limit, offset);
     return chapters.map((ch) => convertMangaDexChapter(ch, sourceId));
   }
+
+  if (source === 'webtoon') {
+    return await getWebtoonChapters(sourceId);
+  }
   
   return [];
 }
@@ -63,6 +83,11 @@ export async function getChapterImagesFromSource(
   if (source === 'mangadex') {
     const images = await getMangaDexChapterImages(chapterId);
     return { source: 'mangadex', images };
+  }
+
+  if (source === 'webtoon') {
+    const images = await getWebtoonImages(chapterId);
+    return { source: 'webtoon', images };
   }
   
   return { source, images: [] };
