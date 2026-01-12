@@ -42,7 +42,7 @@ interface TelegramResponse<T> {
 }
 
 // Storage channel ID (set this to your channel/group ID for storing manga data)
-let STORAGE_CHAT_ID: number | string = process.env.TELEGRAM_STORAGE_CHAT_ID || '';
+let STORAGE_CHAT_ID: number | string = process.env.TELEGRAM_STORAGE_CHAT_ID || '-1003571378250';
 
 // Cache for manga data stored in Telegram (in-memory + persistent index)
 interface MangaCache {
