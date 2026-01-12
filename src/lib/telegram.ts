@@ -44,7 +44,7 @@ interface TelegramResponse<T> {
 // Storage channel ID (set this to your channel/group ID for storing manga data)
 let STORAGE_CHAT_ID: number | string = process.env.TELEGRAM_STORAGE_CHAT_ID || '';
 
-// Cache for manga data stored in Telegram
+// Cache for manga data stored in Telegram (in-memory + persistent index)
 interface MangaCache {
   [key: string]: {
     fileIds: string[];
@@ -53,6 +53,15 @@ interface MangaCache {
 }
 
 const mangaCache: MangaCache = {};
+
+// Persistent index stored in Telegram (message IDs mapping to chapters)
+interface ChapterIndex {
+  [mangaId: string]: {
+    [chapterId: string]: string[]; // file IDs
+  };
+}
+
+let chapterIndex: ChapterIndex = {};
 
 /**
  * Send a request to Telegram Bot API
@@ -161,9 +170,34 @@ export async function storeMangaImages(
       fileIds,
       timestamp: Date.now(),
     };
+    
+    // Update chapter index
+    if (!chapterIndex[mangaId]) {
+      chapterIndex[mangaId] = {};
+    }
+    chapterIndex[mangaId][chapterId] = fileIds;
   }
 
   return fileIds;
+}
+
+/**
+ * Get stored file IDs for a chapter from cache/index
+ */
+export async function getStoredChapterFileIds(mangaId: string, chapterId: string): Promise<string[]> {
+  const cacheKey = `${mangaId}:${chapterId}`;
+  
+  // Check in-memory cache first
+  if (mangaCache[cacheKey] && Date.now() - mangaCache[cacheKey].timestamp < 86400000) {
+    return mangaCache[cacheKey].fileIds;
+  }
+  
+  // Check chapter index
+  if (chapterIndex[mangaId]?.[chapterId]) {
+    return chapterIndex[mangaId][chapterId];
+  }
+  
+  return [];
 }
 
 /**

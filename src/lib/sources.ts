@@ -15,8 +15,14 @@ import {
   getWebtoonChapters,
   getWebtoonImages,
 } from './webtoon';
+import {
+  storeMangaImages,
+  getMangaImagesFromTelegram,
+  getStoredChapterFileIds,
+  setStorageChatId,
+} from './telegram';
 
-// Source priority
+// Source priority (telegram first if cached, then mangadex, then webtoon)
 const SOURCE_PRIORITY: MangaSource[] = ['mangadex', 'webtoon'];
 
 export interface MultiSourceResult {
@@ -75,22 +81,38 @@ export async function getChaptersFromSource(
   return [];
 }
 
-// Get chapter images from source
+// Get chapter images from source (with Telegram caching)
 export async function getChapterImagesFromSource(
   source: MangaSource,
-  chapterId: string
+  chapterId: string,
+  mangaId?: string
 ): Promise<SourceChapterImages> {
-  if (source === 'mangadex') {
-    const images = await getMangaDexChapterImages(chapterId);
-    return { source: 'mangadex', images };
+  // Check Telegram cache first
+  const cachedFileIds = await getStoredChapterFileIds(mangaId || 'unknown', chapterId);
+  if (cachedFileIds.length > 0) {
+    const images = await getMangaImagesFromTelegram(cachedFileIds);
+    if (images.length > 0) {
+      console.log(`Loaded ${images.length} images from Telegram cache`);
+      return { source: 'mangadex', images }; // Return as original source
+    }
   }
 
-  if (source === 'webtoon') {
-    const images = await getWebtoonImages(chapterId);
-    return { source: 'webtoon', images };
+  let images: string[] = [];
+
+  if (source === 'mangadex') {
+    images = await getMangaDexChapterImages(chapterId);
+  } else if (source === 'webtoon') {
+    images = await getWebtoonImages(chapterId);
   }
-  
-  return { source, images: [] };
+
+  // Store to Telegram for future use (async, don't block)
+  if (images.length > 0 && mangaId) {
+    storeMangaImages(mangaId, chapterId, images).catch(err => 
+      console.error('Failed to cache images to Telegram:', err)
+    );
+  }
+
+  return { source, images };
 }
 
 // Get chapters with multi-source fallback (Only MangaDex now)

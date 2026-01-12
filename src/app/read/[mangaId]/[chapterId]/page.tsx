@@ -34,12 +34,12 @@ function ReaderContent({ mangaId, chapterId }: { mangaId: string; chapterId: str
   const [chapters, setChapters] = useState<SourceChapter[]>([]);
   const [chaptersLoading, setChaptersLoading] = useState(true);
 
-  // Fetch chapter images from the appropriate source
+  // Fetch chapter images from the appropriate source (with Telegram caching)
   const { 
     data: multiSourceImages, 
     isLoading: imagesLoading, 
     isError: imagesError 
-  } = useMultiSourceImages(source, chapterId);
+  } = useMultiSourceImages(source, chapterId, mangaId);
 
   // Fetch chapters for navigation
   useEffect(() => {

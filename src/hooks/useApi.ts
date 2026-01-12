@@ -123,11 +123,12 @@ export function useMergedChapters(
 
 export function useMultiSourceImages(
   source: MangaSource | null,
-  chapterId: string | null
+  chapterId: string | null,
+  mangaId?: string | null
 ) {
   return useQuery({
-    queryKey: ['multi-source-images', source, chapterId],
-    queryFn: () => getChapterImagesFromSource(source!, chapterId!),
+    queryKey: ['multi-source-images', source, chapterId, mangaId],
+    queryFn: () => getChapterImagesFromSource(source!, chapterId!, mangaId || undefined),
     enabled: !!source && !!chapterId,
     staleTime: 30 * 60 * 1000, // 30 minutes
   });
