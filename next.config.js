@@ -6,23 +6,15 @@ const nextConfig = {
         protocol: 'https',
         hostname: 's4.anilist.co',
       },
-      // External image domains
-      {
-        protocol: 'https',
-        hostname: 'uploads.mangadex.org',
-      },
-      {
-        protocol: 'https',
-        hostname: '*.mangadex.network',
-      },
-      {
-        protocol: 'https',
-        hostname: 'mangadex.org',
-      },
       // Webtoon
       {
         protocol: 'https',
         hostname: 'webtoon-phinf.pstatic.net',
+      },
+      // Telegram CDN
+      {
+        protocol: 'https',
+        hostname: 'api.telegram.org',
       },
     ],
     // Use unoptimized for external images from CDNs

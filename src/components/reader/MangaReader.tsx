@@ -75,13 +75,13 @@ export function MangaReader({
   imageUrls: rawImageUrls,
   prevChapter,
   nextChapter,
-  source = 'mangadex',
+  source = 'webtoon',
   sourceId,
 }: MangaReaderProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const readerRef = useRef<HTMLDivElement>(null);
   
-  // Filter out placeholder images (MangaDex redirect pages, etc.)
+  // Filter out placeholder images (redirect pages, etc.)
   const imageUrls = filterPlaceholderImages(rawImageUrls);
   
   // Build chapter URLs with source info

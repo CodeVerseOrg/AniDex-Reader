@@ -27,8 +27,8 @@ function ReaderContent({ mangaId, chapterId }: { mangaId: string; chapterId: str
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Get source from URL query params (default to mangadex)
-  const source = (searchParams.get('source') as MangaSource) || 'mangadex';
+  // Get source from URL query params (default to webtoon)
+  const source = (searchParams.get('source') as MangaSource) || 'webtoon';
   const sourceId = searchParams.get('sourceId') || mangaId;
   
   const [chapters, setChapters] = useState<SourceChapter[]>([]);
