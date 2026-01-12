@@ -164,4 +164,16 @@ export async function getMergedChapters(
 export const SOURCE_INFO: Record<MangaSource, { name: string; icon: string; color: string }> = {
   webtoon: { name: 'Webtoon', icon: '📱', color: '#00dc64' },
   telegram: { name: 'Telegram Cache', icon: '📦', color: '#0088cc' },
+  mangagallery: { name: 'Manga Gallery', icon: '📚', color: '#e91e63' },
 } as any;
+
+// Manga Gallery Telegram channel info
+export const MANGA_GALLERY = {
+  channel: '@Manga_Gallery',
+  index: '@Manga_Gallery_Index',
+  channelId: -1001200929866,
+  indexId: -1001566297640,
+  requestBot: '@Aii_Hayasaka_Bot',
+  link: 'https://t.me/Manga_Gallery',
+  indexLink: 'https://t.me/Manga_Gallery_Index',
+};

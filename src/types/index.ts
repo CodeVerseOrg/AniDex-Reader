@@ -129,7 +129,7 @@ export interface UnifiedManga {
   isAdult: boolean;
 }
 // Multi-Source Types
-export type MangaSource = 'webtoon' | 'telegram';
+export type MangaSource = 'webtoon' | 'telegram' | 'mangagallery';
 
 export interface SourceChapter {
   id: string;

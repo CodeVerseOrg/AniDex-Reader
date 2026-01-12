@@ -10,6 +10,10 @@ const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8322648904:AAFJOwWHY8rfem3v
 const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}`;
 const SITE_URL = 'https://anidex-reader.netlify.app';
 
+// Manga Gallery channel info
+const MANGA_GALLERY = '@Manga_Gallery';
+const MANGA_GALLERY_INDEX = '@Manga_Gallery_Index';
+
 let lastUpdateId = 0;
 
 interface TelegramUpdate {
@@ -114,10 +118,11 @@ async function handleCommand(chatId: number, text: string, from: string) {
         `👋 Welcome to AniDex Reader Bot!\n\n` +
         `📖 *Commands:*\n` +
         `/search <title> - Search for manga\n` +
+        `/manga <title> - Search Manga Gallery\n` +
         `/webtoon <title> - Search Webtoon directly\n` +
         `/chapters <id> - Get chapters for a Webtoon\n` +
+        `/gallery - Browse Manga Gallery channel\n` +
         `/popular - View popular manga\n` +
-        `/trending - View trending manga\n` +
         `/help - Show this help\n\n` +
         `🔗 *Website:* ${SITE_URL}`,
         'Markdown'
@@ -128,16 +133,67 @@ async function handleCommand(chatId: number, text: string, from: string) {
       await sendMessage(chatId,
         `📚 *AniDex Reader Bot Help*\n\n` +
         `*Available Commands:*\n` +
-        `• /search <title> - Search manga by title\n` +
+        `• /search <title> - Search AniDex website\n` +
+        `• /manga <title> - Search Manga Gallery (Telegram)\n` +
         `• /webtoon <title> - Search Webtoon.com\n` +
-        `• /chapters <id> - Get chapters (use ID from /webtoon)\n` +
-        `• /popular - Browse popular manga\n` +
-        `• /trending - Browse trending manga\n\n` +
-        `*How to Read:*\n` +
-        `1. Use /webtoon to search\n` +
-        `2. Use /chapters <id> to see episodes\n` +
-        `3. Click link to read!\n\n` +
+        `• /chapters <id> - Get Webtoon chapters\n` +
+        `• /gallery - Open Manga Gallery channel\n` +
+        `• /popular - Browse popular manga\n\n` +
+        `*Manga Sources:*\n` +
+        `📱 Webtoon - Official webtoons\n` +
+        `📦 Manga Gallery - Community uploads\n\n` +
         `🔗 ${SITE_URL}`,
+        'Markdown'
+      );
+      break;
+
+    case '/manga':
+      if (!args) {
+        await sendMessage(chatId, 
+          `📚 *Manga Gallery Search*\n\n` +
+          `To find manga in Manga Gallery:\n` +
+          `1. Visit ${MANGA_GALLERY_INDEX}\n` +
+          `2. Use the search or browse by hashtag\n\n` +
+          `Popular series available:\n` +
+          `• One Piece\n` +
+          `• Jujutsu Kaisen\n` +
+          `• Chainsaw Man\n` +
+          `• Spy x Family\n` +
+          `• My Hero Academia\n\n` +
+          `Use /gallery to open the channel!`,
+          'Markdown'
+        );
+      } else {
+        // Create search link with hashtag format
+        const hashtag = args.replace(/\s+/g, '').toLowerCase();
+        await sendMessage(chatId,
+          `🔍 *Searching Manga Gallery for:* ${args}\n\n` +
+          `📖 Try these links:\n` +
+          `• [Manga Gallery](https://t.me/Manga_Gallery)\n` +
+          `• [Index Channel](https://t.me/Manga_Gallery_Index)\n\n` +
+          `💡 *Tip:* Search for #${hashtag} in the Index channel!\n\n` +
+          `🤖 *Request Bot:* @Aii_Hayasaka_Bot`,
+          'Markdown'
+        );
+      }
+      break;
+
+    case '/gallery':
+      await sendMessage(chatId,
+        `📚 *Manga Gallery*\n\n` +
+        `A community channel for Manga, Manhwa & Manhua!\n\n` +
+        `📖 *Main Channel:* ${MANGA_GALLERY}\n` +
+        `📑 *Index:* ${MANGA_GALLERY_INDEX}\n` +
+        `🤖 *Request Bot:* @Aii_Hayasaka_Bot\n\n` +
+        `*Available Series:*\n` +
+        `• One Piece\n` +
+        `• Jujutsu Kaisen\n` +
+        `• Black Clover\n` +
+        `• My Hero Academia\n` +
+        `• Chainsaw Man\n` +
+        `• Spy X Family\n` +
+        `• And many more!\n\n` +
+        `[Open Manga Gallery](https://t.me/Manga_Gallery)`,
         'Markdown'
       );
       break;
